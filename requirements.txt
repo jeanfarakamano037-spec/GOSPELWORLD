@@ -1,4 +1,5 @@
-Flask
-cloudinary
-python-dotenv
-gunicorn
+Flask==3.0.0
+cloudinary==1.36.0
+python-dotenv==1.0.0
+gunicorn==21.2.0
+Pillow==10.0.0
