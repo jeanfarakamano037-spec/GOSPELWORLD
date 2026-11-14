@@ -96,7 +96,7 @@ input,select,textarea{background:#232323!important;color:#fff!important;border:1
 @keyframes fire{from{transform:scale(1);filter:brightness(1)}to{transform:scale(1.05);filter:brightness(1.3)}}
 .float{animation:float 3s ease-in-out infinite}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-.publish-float{position:fixed;bottom:165px;right:16px;z-index:120;box-shadow:0 10px 40px rgba(255,215,0,.8);animation:float 2s ease-in-out infinite}
+.publish-float{position:fixed;bottom:165px;right:12px;z-index:120;box-shadow:0 10px 40px rgba(255,215,0,.8);animation:float 2s ease-in-out infinite}
 .pulse-ring{animation:pulseRing 1.5s infinite}
 @keyframes pulseRing{0%{box-shadow:0 0 0 0 rgba(255,215,0,.7)}70%{box-shadow:0 0 0 18px rgba(255,215,0,0)}100%{box-shadow:0 0 0 0 rgba(255,215,0,0)}}
 .type-btn{transition:.2s;border:2px solid transparent}
@@ -114,56 +114,34 @@ input,select,textarea{background:#232323!important;color:#fff!important;border:1
 #mobileMenu{transition:transform .3s ease}
 #mobileMenu.closed{transform:translateX(-100%)}
 #mobileMenu.open{transform:translateX(0)}
-.mob-nav-btn.active{color:#FFD700!important}
-/* ===== V13 - SPOTIFY MODE - UNIQUEMENT TELEPHONE (max 768px) - ORDI NE CHANGE PAS ===== */
+/* ===== V15 - SPOTIFY EXACT - UNIQUEMENT TELEPHONE ===== */
+.spotify-row{display:none}
 @media (max-width: 768px){
-  /* Tout devient petit comme Spotify */
-  body{font-size:13px}
-  /* Hero GOSPEL WORLD beaucoup plus petit */
-  .hero-grad{padding-top:10px!important;padding-bottom:12px!important}
-  .hero-grad h1{font-size:38px!important;line-height:.9!important;margin-top:6px!important}
-  .hero-grad p{font-size:13px!important}
-  .hero-grad .bar{height:18px!important}
-  /* Bandeau artiste reduit */
-  .hero-grad .bg-black\\/60{padding:8px!important}
-  /* Boutons hero petits */
+  body{font-size:13px;background:#000!important}
+  .hero-grad{padding-top:10px!important;padding-bottom:10px!important}
+  .hero-grad h1{font-size:34px!important;line-height:.9!important}
   .hero-grad button{padding:7px 12px!important;font-size:11px!important}
-  /* Stats petits */
   #statsBar{gap:6px!important;margin-top:10px!important}
-  #statsBar div{padding:6px!important}
-  /* Recherche + filtres compacts */
   #search{padding:9px 14px!important;font-size:13px!important}
   .tab-btn{padding:6px 10px!important;font-size:11px!important}
-  /* Cartes Spotify : petites, 2 par ligne, image ronde carree compacte */
-  #grid{grid-template-columns:1fr 1fr!important;gap:8px!important;padding-left:10px!important;padding-right:10px!important;margin-top:10px!important}
-  .card{padding:8px!important;border-radius:14px!important}
-  .card h3{font-size:12px!important;margin-top:6px!important}
-  .card p{font-size:10px!important}
-  .card img{border-radius:10px!important}
-  .card button{padding:6px!important;font-size:11px!important}
-  .card .flex{gap:4px!important;margin-top:6px!important}
-  /* Cache les gros boutons dons dans les cartes sur tel pour faire propre comme Spotify - on garde juste Ecouter + Like */
-  .card .money-btn, .card .money-gw{display:none!important}
-  /* Stories plus petites */
-  #stories .story-ring{width:52px!important;height:52px!important}
-  /* Titres sections plus petits */
-  h2{font-size:17px!important}
-  /* Top Mondial compact */
-  #top10 div{padding:8px!important}
-  /* Artistes plus petits */
-  #artists img{width:88px!important;height:88px!important}
-  /* Bandeau PUBLIER en haut plus petit */
-  section:first-of-type div{padding:10px!important}
-  section:first-of-type h3{font-size:14px!important}
-  section:first-of-type p{font-size:11px!important}
-  section:first-of-type button{padding:8px 14px!important;font-size:12px!important}
-  /* Bouton flottant Publier plus petit */
-  .publish-float{bottom:158px!important;padding:9px 14px!important;font-size:12px!important}
-  /* Player bas compact */
-  .fixed.bottom-\\[58px\\]{padding:8px!important}
-  #ptitle{font-size:12px!important}
-  /* Barre nav bas plus fine */
-  .mob-nav-btn span:first-child{font-size:18px!important}
+  /* ON CACHE LA GRILLE CLASSIQUE SUR TELEPHONE, ON MET SPOTIFY A LA PLACE */
+  #grid{display:none!important}
+  .spotify-row{display:block!important}
+  /* LIGNE SPOTIFY : defile horizontal, pas de barre, 2 covers et demi visibles */
+  .spot-row{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 12px 4px 12px;scrollbar-width:none}
+  .spot-row::-webkit-scrollbar{display:none}
+  .spot-card{flex:0 0 148px;scroll-snap-align:start;cursor:pointer}
+  .spot-card img{width:148px;height:148px;object-fit:cover;border-radius:8px}
+  .spot-card.artist img{border-radius:9999px!important}
+  .spot-card p{font-size:14px;font-weight:600;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .spot-card span{font-size:12px;color:#B3B3B3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+  .spot-title{font-size:20px;font-weight:800;padding:18px 12px 10px 12px}
+  /* Le reste plus petit */
+  #stories .story-ring{width:50px!important;height:50px!important}
+  h2{font-size:16px!important}
+  #top10{display:none!important}
+  #artists{display:none!important}
+  .publish-float{bottom:158px!important;padding:8px 12px!important;font-size:11px!important;right:8px!important}
 }
 </style></head><body>
 <div id="stars"></div>
@@ -252,11 +230,24 @@ input,select,textarea{background:#232323!important;color:#fff!important;border:1
 <button onclick="showTab('TOP',this)" class="tab-btn chip px-3 md:px-4 py-2 rounded-full text-xs md:text-sm font-bold">🌍 Top Mondial</button>
 <button onclick="showTab('LIKED',this)" class="tab-btn chip px-3 md:px-4 py-2 rounded-full text-xs md:text-sm font-bold">❤️ Likes</button>
 </div>
-<h2 id="sectionTitle" class="text-2xl font-black mt-8">⚡ FLASH ÉVANGILE WORLD</h2><p class="text-[#B3B3B3] text-sm">Single - EP - Mixtape - Album - Live - Acapella - Worship - HD Gratuit - Sons pour toujours 🔒</p>
+<h2 id="sectionTitle" class="text-2xl font-black mt-8">⚡ FLASH ÉVANGILE WORLD</h2><p class="text-[#B3B3B3] text-sm hidden md:block">Single - EP - Mixtape - Album - Live - Acapella - Worship - HD Gratuit - Sons pour toujours 🔒</p>
 </section>
-<section id="grid" class="px-4 md:px-8 mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></section>
-<section class="px-4 md:px-8 mt-8"><h2 class="text-2xl font-black">🌍 Top Mondial - Les plus aimés dans le monde</h2><div id="top10" class="mt-4 space-y-2"></div></section>
-<section class="px-4 md:px-8 mt-8"><h2 class="text-2xl font-black">🎤 Artistes du Royaume ✅</h2><div id="artists" class="mt-4 flex gap-3 overflow-x-auto pb-2"></div></section>
+
+<!-- ===== V15 - SPOTIFY SUR TELEPHONE : LIGNES HORIZONTALES ===== -->
+<div class="spotify-row">
+  <div class="spot-title">Titres tendance 🔥</div>
+  <div id="spotTrending" class="spot-row"></div>
+  <div class="spot-title">Artistes populaires 🎤</div>
+  <div id="spotArtists" class="spot-row"></div>
+  <div class="spot-title">Albums et singles populaires 💿</div>
+  <div id="spotAlbums" class="spot-row"></div>
+  <div class="spot-title">Nouveautés du Royaume ✨</div>
+  <div id="spotNew" class="spot-row"></div>
+</div>
+
+<section id="grid" class="px-4 md:px-8 mt-6 grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></section>
+<section class="px-4 md:px-8 mt-8 hidden md:block"><h2 class="text-2xl font-black">🌍 Top Mondial - Les plus aimés dans le monde</h2><div id="top10" class="mt-4 space-y-2"></div></section>
+<section class="px-4 md:px-8 mt-8 hidden md:block"><h2 class="text-2xl font-black">🎤 Artistes du Royaume ✅</h2><div id="artists" class="mt-4 flex gap-3 overflow-x-auto pb-2"></div></section>
 </main></div>
 
 <div class="fixed bottom-[58px] md:bottom-0 w-full bg-black/95 border-t border-[#FFD700]/20 p-3 z-50">
@@ -267,6 +258,7 @@ input,select,textarea{background:#232323!important;color:#fff!important;border:1
 <div class="flex items-center gap-2 ml-auto"><button onclick="openFullPlayer()" class="hidden md:flex w-10 h-10 bg-white/10 rounded-full items-center justify-center"><i class="fa-solid fa-expand"></i></button><button onclick="shareCurrent()" class="w-9 h-9 md:w-10 md:h-10 bg-white/10 rounded-full"><i class="fa-solid fa-share-nodes"></i></button><button onclick="downloadCurrent()" class="w-9 h-9 md:w-10 md:h-10 bg-[#1DB954] rounded-full"><i class="fa-solid fa-download"></i></button><button id="playBtnM" class="md:hidden w-11 h-11 bg-[#FFD700] text-black rounded-full shrink-0"><i class="fa-solid fa-play"></i></button></div>
 </div><div class="md:hidden mt-2"><div class="w-full bg-white/20 h-1 rounded-full"><div id="progM" class="h-1 bg-[#FFD700] rounded-full w-0"></div></div></div><audio id="audio" class="hidden"></audio></div>
 
+<!-- BARRE BAS SPOTIFY : Accueil / Rechercher / Bibliotheque / Premium -> Ici : Accueil / Rechercher / Publier / Top / Menu -->
 <div class="md:hidden fixed bottom-0 w-full bg-black border-t border-white/10 z-[60] flex justify-around py-2 pb-3">
 <button onclick="goHome()" class="mob-nav-btn flex flex-col items-center text-xs font-bold"><span class="text-xl">🏠</span>Accueil</button>
 <button onclick="document.getElementById('search').focus();window.scrollTo({top:650,behavior:'smooth'})" class="mob-nav-btn flex flex-col items-center text-xs"><span class="text-xl">🔍</span>Rechercher</button>
@@ -361,32 +353,40 @@ function donateArtist(id){ let it=ALL.find(x=>x.id===id); if(!it) return; DONATE
 function donateCurrentArtist(){ let s=CURRENT[CURRENT_INDEX]; if(!s) return alert('Choisis un son'); let it=ALL.find(x=>x.id===s.id)||ALL.find(x=>x.artist===s.artist); if(it) donateArtist(it.id); }
 function openArtistFromPlayer(){ let s=CURRENT[CURRENT_INDEX]; if(!s) return; closeFullPlayer(); setTimeout(()=>openArtist(s.artist),300); }
 function doDonate(amount){ navigator.clipboard.writeText(DONATE_TARGET.number||''); alert('Numero copie: '+(DONATE_TARGET.number||'')+'\\n\\nEnvoie '+amount.toLocaleString()+' GNF par Orange Money / Wave a '+DONATE_TARGET.name+'\\n\\n🎁 BONUS CIEL: Dieu te benisse abondamment! Tu viens de semer dans le Royaume! 🙏👑'); }
-async function load(){ let r=await fetch('/api/all'); let d=await r.json(); ALL=d.items; let v=await fetch('/api/verse').then(x=>x.json()); document.getElementById('verseText').innerText='"'+v.text+'"'; document.getElementById('verseRef').innerText='- '+v.ref+' - FLASH EVANGILE WORLD'; render(); renderTop(); renderArtists(); renderStats(); renderStories(); }
+async function load(){ let r=await fetch('/api/all'); let d=await r.json(); ALL=d.items; let v=await fetch('/api/verse').then(x=>x.json()); document.getElementById('verseText').innerText='"'+v.text+'"'; document.getElementById('verseRef').innerText='- '+v.ref+' - FLASH EVANGILE WORLD'; render(); renderTop(); renderArtists(); renderStats(); renderStories(); renderSpotify(); }
 function startRadio(){ if(!ALL.length) return alert('Pas encore de sons - Publie sur FLASH EVANGILE WORLD'); RADIO=true; CURRENT=ALL.flatMap(x=>x.type==='SINGLE'?[{title:x.title,artist:x.artist,file:x.file,id:x.id,cover:x.cover,type:x.type}]:x.songs.map(s=>({title:s.title,artist:x.artist,file:s.file,id:x.id,cover:x.cover,type:x.type}))); CURRENT_INDEX=Math.floor(Math.random()*CURRENT.length); playCurrent('📻 RADIO ROYAUME DE DIEU'); alert('📻 Radio Royaume lancee!'); }
 function openFullPlayer(){ if(!CURRENT[CURRENT_INDEX]) return alert('Choisis un son'); let fp=document.getElementById('fullPlayer'); fp.classList.remove('hidden'); fp.classList.add('flex'); }
 function closeFullPlayer(){ let fp=document.getElementById('fullPlayer'); fp.classList.add('hidden'); fp.classList.remove('flex'); }
 function openLyrics(){ let s=CURRENT[CURRENT_INDEX]; if(!s) return; document.getElementById('lyricsText').innerHTML=`<b>${s.title} - ${s.artist}</b><br><br>Gloire a Dieu... 🙏<br>Chante avec tout ton coeur<br>Jesus est Roi, Il regne a jamais<br>Dans le Royaume de Dieu! Alleluia! Amen! 🔥👑`; document.getElementById('lyricsModal').classList.remove('hidden'); }
 function openQueue(){ document.getElementById('queueList').innerHTML=CURRENT.map((s,i)=>`<div class='flex gap-3 bg-white/5 p-2 rounded-xl ${i===CURRENT_INDEX?'border border-yellow-400':''}'><span>${i+1}.</span><div><b class='text-sm block'>${s.title}</b><span class='text-xs text-[#B3B3B3]'>${s.artist} ${i===CURRENT_INDEX?'▶ EN COURS':''}</span></div></div>`).join('')||'File vide'; document.getElementById('queueModal').classList.remove('hidden'); }
-function showTab(f,btn){ FILTER=f; document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('pill-active')); if(btn && btn.classList.contains('tab-btn')) btn.classList.add('pill-active'); document.getElementById('sectionTitle').innerText=f==='TOP'?'🌍 Top Mondial':f==='LIKED'?'❤️ Mes Likes':'⚡ FLASH ÉVANGILE WORLD'; render(); window.scrollTo({top:700,behavior:'smooth'}); }
-function toggleLike(id){ if(LIKES.includes(id)) LIKES=LIKES.filter(x=>x!==id); else LIKES.push(id); localStorage.setItem('gw_likes',JSON.stringify(LIKES)); render(); renderTop(); fetch('/api/like',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})}); }
-function renderStats(){ let artists=new Set(ALL.map(x=>x.artist)).size; let likes=ALL.reduce((a,x)=>a+(x.likes||0),0); document.getElementById('statsBar').innerHTML=`<div class='bg-white/5 rounded-2xl p-2 md:p-3 text-center border border-yellow-500/20'><b class='text-lg md:text-xl text-[#FFD700]'>${ALL.length}</b><p class='text-[10px] md:text-xs text-[#B3B3B3]'>Projets</p></div><div class='bg-white/5 rounded-2xl p-2 md:p-3 text-center border border-yellow-500/20'><b class='text-lg md:text-xl text-[#FFD700]'>${artists}</b><p class='text-[10px] md:text-xs text-[#B3B3B3]'>Artistes ✅</p></div><div class='bg-white/5 rounded-2xl p-2 md:p-3 text-center border border-yellow-500/20'><b class='text-lg md:text-xl text-[#FFD700]'>${likes}</b><p class='text-[10px] md:text-xs text-[#B3B3B3]'>Likes</p></div><div class='bg-gradient-to-br from-yellow-500 to-pink-500 rounded-2xl p-2 md:p-3 text-center'><b class='text-base md:text-xl text-black'>🌍 120+</b><p class='text-[10px] md:text-xs text-black font-bold'>Pays</p></div>`; document.getElementById('statsSide').innerText=`${ALL.length} projets - ${artists} artistes - 🌍 Mondial`; }
+function showTab(f,btn){ FILTER=f; document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('pill-active')); if(btn && btn.classList.contains('tab-btn')) btn.classList.add('pill-active'); document.getElementById('sectionTitle').innerText=f==='TOP'?'🌍 Top Mondial':f==='LIKED'?'❤️ Mes Likes':'⚡ FLASH ÉVANGILE WORLD'; render(); renderSpotify(); window.scrollTo({top:700,behavior:'smooth'}); }
+function toggleLike(id){ if(LIKES.includes(id)) LIKES=LIKES.filter(x=>x!==id); else LIKES.push(id); localStorage.setItem('gw_likes',JSON.stringify(LIKES)); render(); renderTop(); renderSpotify(); fetch('/api/like',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})}); }
+function renderStats(){ let artists=new Set(ALL.map(x=>x.artist)).size; let likes=ALL.reduce((a,x)=>a+(x.likes||0),0); document.getElementById('statsBar').innerHTML=`<div class='bg-white/5 rounded-2xl p-2 md:p-3 text-center border border-yellow-500/20'><b class='text-lg md:text-xl text-[#FFD700]'>${ALL.length}</b><p class='text-[10px] md:text-xs text-[#B3B3B3]'>Projets</p></div><div class='bg-white/5 rounded-2xl p-2 md:p-3 text-center border border-yellow-500/20'><b class='text-lg md:text-xl text-[#FFD700]'>${artists}</b><p class='text-[10px] md:text-xs text-[#B3B3B3]'>Artistes ✅</p></div><div class='bg-white/5 rounded-2xl p-2 md:p-3 text-center border border-yellow-500/20'><b class='text-lg md:text-xl text-[#FFD700]'>${likes}</b><p class='text-[10px] md:text-xs text-[#B3B3B3]'>Likes</p></div><div class='bg-gradient-to-br from-yellow-500 to-pink-500 rounded-2xl p-2 md:p-3 text-center'><b class='text-base md:text-xl text-black'>🌍 120+</b><p class='text-[10px] md:text-xs text-black font-bold'>Pays</p></div>`; let ss=document.getElementById('statsSide'); if(ss) ss.innerText=`${ALL.length} projets - ${artists} artistes - 🌍 Mondial`; }
 function renderStories(){ let map={}; ALL.forEach(x=>{ if(!map[x.artist]) map[x.artist]=x.cover; }); document.getElementById('stories').innerHTML=Object.entries(map).map(([n,c])=>`<div onclick="openArtist('${n}')" class='shrink-0 text-center cursor-pointer'><div class='story-ring w-[68px] h-[68px]'><img src='${c}' class='w-full h-full rounded-full object-cover border-2 border-black'></div><p class='text-[11px] mt-1 truncate w-[68px]'>${n} ✅</p></div>`).join(''); }
-function renderTop(){ let top=[...ALL].sort((a,b)=>(b.likes||0)-(a.likes||0)).slice(0,10); document.getElementById('top10').innerHTML=top.map((x,i)=>`<div class='flex items-center gap-3 bg-[#181818] p-3 rounded-2xl border border-white/5'><span class='w-8 text-center font-black text-[#FFD700] text-lg'>${i+1}</span><img src='${x.cover}' class='w-12 h-12 rounded-lg object-cover'><div class='flex-1 min-w-0'><b class='truncate block'>${x.title}</b><span class='text-xs text-[#B3B3B3]'>${x.artist} ✅ - ${x.type} - ❤️ ${x.likes||0} - 🌍 Mondial</span></div><button onclick="playSingle('${x.id}')" class='w-10 h-10 bg-[#FFD700] text-black rounded-full'><i class='fa-solid fa-play'></i></button></div>`).join(''); }
-function renderArtists(){ let map={}; ALL.forEach(x=>{ if(!map[x.artist]) map[x.artist]={cover:x.cover,count:0,om:x.artist_om}; map[x.artist].count++; }); document.getElementById('artists').innerHTML=Object.entries(map).map(([name,info])=>`<div onclick="openArtist('${name}')" class='shrink-0 w-[120px] text-center cursor-pointer'><img src='${info.cover}' class='w-[120px] h-[120px] rounded-full object-cover border-2 border-[#FFD700]'><b class='block mt-2 truncate'>${name} ✅</b><span class='text-xs text-[#B3B3B3]'>${info.count} projet(s) - 👑 Royaume</span></div>`).join(''); }
+// ===== V15 - SPOTIFY ROWS : 20 covers par ligne, tu glisses =====
+function renderSpotify(){
+  let q=(document.getElementById('search').value||'').toLowerCase();
+  let list=ALL.filter(x=>{ if(FILTER==='LIKED' && !LIKES.includes(x.id)) return false; if(FILTER!=='all' && FILTER!=='LIKED' && FILTER!=='TOP' && x.type!==FILTER) return false; if(q && !(x.title.toLowerCase().includes(q)||x.artist.toLowerCase().includes(q))) return false; return true; });
+  let trending=[...list].sort((a,b)=>(b.likes||0)-(a.likes||0));
+  let albums=[...list];
+  let news=[...list].reverse();
+  let card = (x)=>`<div class="spot-card" onclick="playSingle('${x.id}')"><img src="${x.cover}"><p>${x.title}</p><span>${x.artist} ✅ - ${x.type}</span></div>`;
+  let el1=document.getElementById('spotTrending'); if(el1) el1.innerHTML=trending.map(card).join('')||'<p style="padding:0 12px;color:#888">Pas encore de titre - Publie le premier!</p>';
+  let el3=document.getElementById('spotAlbums'); if(el3) el3.innerHTML=albums.map(card).join('')||'<p style="padding:0 12px;color:#888">Pas encore - Publie!</p>';
+  let el4=document.getElementById('spotNew'); if(el4) el4.innerHTML=news.map(card).join('')||'';
+  // Artistes populaires - photo RONDE comme Spotify
+  let map={}; ALL.forEach(x=>{ if(!map[x.artist]) map[x.artist]=x; });
+  let el2=document.getElementById('spotArtists'); if(el2) el2.innerHTML=Object.entries(map).map(([name,info])=>`<div class="spot-card artist" onclick="openArtist('${name}')"><img src="${info.cover}"><p>${name}</p><span>Artiste ✅</span></div>`).join('')||'';
+}
+function renderTop(){ let top=[...ALL].sort((a,b)=>(b.likes||0)-(a.likes||0)).slice(0,10); let el=document.getElementById('top10'); if(!el) return; el.innerHTML=top.map((x,i)=>`<div class='flex items-center gap-3 bg-[#181818] p-3 rounded-2xl border border-white/5'><span class='w-8 text-center font-black text-[#FFD700] text-lg'>${i+1}</span><img src='${x.cover}' class='w-12 h-12 rounded-lg object-cover'><div class='flex-1 min-w-0'><b class='truncate block'>${x.title}</b><span class='text-xs text-[#B3B3B3]'>${x.artist} ✅ - ${x.type} - ❤️ ${x.likes||0} - 🌍 Mondial</span></div><button onclick="playSingle('${x.id}')" class='w-10 h-10 bg-[#FFD700] text-black rounded-full'><i class='fa-solid fa-play'></i></button></div>`).join(''); }
+function renderArtists(){ let map={}; ALL.forEach(x=>{ if(!map[x.artist]) map[x.artist]={cover:x.cover,count:0,om:x.artist_om}; map[x.artist].count++; }); let el=document.getElementById('artists'); if(!el) return; el.innerHTML=Object.entries(map).map(([name,info])=>`<div onclick="openArtist('${name}')" class='shrink-0 w-[120px] text-center cursor-pointer'><img src='${info.cover}' class='w-[120px] h-[120px] rounded-full object-cover border-2 border-[#FFD700]'><b class='block mt-2 truncate'>${name} ✅</b><span class='text-xs text-[#B3B3B3]'>${info.count} projet(s) - 👑 Royaume</span></div>`).join(''); }
 function openArtist(name){ let list=ALL.filter(x=>x.artist===name); let om=list[0].artist_om||''; document.getElementById('artistContent').innerHTML=`<div class='relative inline-block'><img src='${list[0].cover}' class='w-32 h-32 rounded-full mx-auto object-cover border-4 border-[#FFD700] glow'><span class='absolute -bottom-1 -right-1 bg-[#FFD700] text-black text-xs font-black px-2 py-1 rounded-full'>✅ VERIFIE</span></div><h3 class='font-black text-2xl mt-3'>${name} ✅</h3><p class='text-[#B3B3B3] text-sm'>Artiste du Royaume - ${list.length} projet(s) - 🌍 Mondial</p><button onclick="document.getElementById('artistModal').classList.add('hidden');donateArtist('${list[0].id}')" class='mt-3 w-full money-btn py-2 rounded-full font-bold text-sm'>🙏 Soutenir ${name} - Orange Money ${om}</button><div class='mt-4 space-y-2 text-left'>${list.map(x=>`<div onclick="document.getElementById('artistModal').classList.add('hidden');playSingle('${x.id}')" class='flex gap-3 bg-white/5 p-2 rounded-xl cursor-pointer'><img src='${x.cover}' class='w-10 h-10 rounded-lg'><div><b class='text-sm block'>${x.title}</b><span class='text-xs text-[#B3B3B3]'>${x.type} - ❤️ ${x.likes||0}</span></div></div>`).join('')}</div>`; document.getElementById('artistModal').classList.remove('hidden'); }
 function render(){
   let q=(document.getElementById('search').value||'').toLowerCase();
   let list=ALL.filter(x=>{ if(FILTER==='LIKED' && !LIKES.includes(x.id)) return false; if(FILTER==='TOP') return true; if(FILTER!=='all' && FILTER!=='LIKED' && x.type!==FILTER) return false; if(q && !(x.title.toLowerCase().includes(q)||x.artist.toLowerCase().includes(q))) return false; return true; });
   if(FILTER==='TOP') list=[...list].sort((a,b)=>(b.likes||0)-(a.likes||0)).slice(0,10);
-  let isMobile = window.innerWidth <= 768;
   document.getElementById('grid').innerHTML=list.map(item=>{
     let liked=LIKES.includes(item.id)?'❤️':'🤍'; let cmt=(COMMENTS[item.id]||[]).length;
-    // ===== SUR TELEPHONE : STYLE SPOTIFY - PETIT, PROPRE, 1 LIGNE =====
-    if(isMobile){
-      if(item.type==='SINGLE') return `<div class='card group rounded-[14px] p-2'><div class='relative'><img src='${item.cover}' class='w-full aspect-square object-cover rounded-lg'><button onclick="playSingle('${item.id}')" class='absolute bottom-2 right-2 w-9 h-9 bg-[#FFD700] text-black rounded-full shadow-lg'><i class='fa-solid fa-play text-xs'></i></button></div><h3 class='font-bold mt-2 truncate text-xs'>${item.title}</h3><p class='text-[10px] text-[#B3B3B3] truncate'>${item.artist} ✅</p><div class='flex gap-1 mt-2'><button onclick="playSingle('${item.id}')" class='flex-1 bg-[#FFD700] text-black font-bold py-1.5 rounded-full text-[11px]'>▶ ECOUTER</button><button onclick="toggleLike('${item.id}')" class='w-8 bg-white/10 rounded-full text-sm'>${liked}</button></div><div class='flex gap-1 mt-1'><button onclick="openShare('${item.id}')" class='flex-1 bg-white/10 py-1.5 rounded-full text-[10px]'>PARTAGER 🌍</button><button onclick="downloadItem('${item.id}')" class='flex-1 bg-[#1DB954] py-1.5 rounded-full text-[10px]'>⬇ HD</button></div><button onclick="openComments('${item.id}')" class='w-full bg-white/5 py-1 rounded-full text-[10px] mt-1'>💬 ${cmt} Amen</button></div>`;
-      else { let countTxt=item.songs?item.songs.length+' Sons':''; return `<div class='card rounded-[14px] p-2 border border-[#FFD700]/20'><div class='relative'><img src='${item.cover}' class='w-full aspect-square object-cover rounded-lg'><span class='absolute top-1 left-1 bg-[#FFD700] text-black text-[9px] font-black px-1.5 py-0.5 rounded-full'>${item.type} - ${countTxt}</span></div><h3 class='font-bold mt-2 truncate text-xs'>${item.title}</h3><p class='text-[10px] text-[#B3B3B3] truncate'>${item.artist} ✅</p><div class='flex gap-1 mt-2'><button onclick="playCollection('${item.id}')" class='flex-1 bg-[#FFD700] text-black font-bold py-1.5 rounded-full text-[11px]'>▶ TOUT (${countTxt})</button><button onclick="toggleLike('${item.id}')" class='w-8 bg-white/10 rounded-full text-sm'>${liked}</button></div><div class='flex gap-1 mt-1'><button onclick="openShare('${item.id}')" class='flex-1 bg-white/10 py-1.5 rounded-full text-[10px]'>PARTAGER 🌍</button><button onclick="downloadItem('${item.id}')" class='flex-1 bg-[#1DB954] py-1.5 rounded-full text-[10px]'>⬇ HD</button></div><button onclick="openComments('${item.id}')" class='w-full bg-white/5 py-1 rounded-full text-[10px] mt-1'>💬 ${cmt} Amen</button></div>`; }
-    }
-    // ===== SUR ORDI : ON NE CHANGE RIEN - COMME AVANT =====
     let shareBtn=`<button onclick="openShare('${item.id}')" class='flex-1 bg-white/10 py-2 rounded-full text-xs font-bold'>PARTAGER 🌍</button>`;
     let dlBtn=`<button onclick="downloadItem('${item.id}')" class='flex-1 bg-[#1DB954] py-2 rounded-full text-xs font-bold'>⬇ HD GRATUIT</button>`;
     let donateArtistBtn=`<button onclick="donateArtist('${item.id}')" class='w-full money-btn py-2 rounded-full text-xs font-bold mt-2'>🙏 SOUTENIR ${item.artist.toUpperCase()} - Orange Money</button>`;
