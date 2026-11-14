@@ -1,10 +1,36 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
 import json, os, uuid, random, urllib.request, datetime
+from io import BytesIO
 import cloudinary
 import cloudinary.uploader
 from dotenv import load_dotenv
 load_dotenv()
 app = Flask(__name__)
+
+# ===== ICONE G DOREE - FAITE PAR TON PROPRE SERVEUR - POUR INSTALLATION =====
+try:
+    from PIL import Image, ImageDraw, ImageFont
+    HAS_PIL = True
+except:
+    HAS_PIL = False
+
+def make_gospel_icon(size):
+    img = Image.new("RGB", (size, size), (10, 10, 18))
+    d = ImageDraw.Draw(img)
+    d.ellipse([size*0.05, size*0.05, size*0.95, size*0.95], fill=(255, 215, 0))
+    d.ellipse([size*0.12, size*0.12, size*0.88, size*0.88], fill=(10, 10, 18))
+    try:
+        font = ImageFont.truetype("DejaVuSans-Bold.ttf", int(size*0.55))
+    except:
+        font = ImageFont.load_default()
+    txt = "G"
+    bbox = d.textbbox((0,0), txt, font=font)
+    tw = bbox[2]-bbox[0]; th = bbox[3]-bbox[1]
+    d.text(((size-tw)/2 - bbox[0], (size-th)/2 - bbox[1] - size*0.03), txt, fill=(255, 215, 0), font=font)
+    buf = BytesIO()
+    img.save(buf, format="PNG")
+    buf.seek(0)
+    return buf
 
 GOSPEL_OM = "629757411"
 GOSPEL_OM_DISPLAY = "629-757-411"
@@ -67,6 +93,12 @@ def home():
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>GOSPEL WORLD - FLASH EVANGILE WORLD - ROYAUME DE DIEU</title>
 <link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<meta name="theme-color" content="#FFD700">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GOSPEL WORLD">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
@@ -118,13 +150,10 @@ input:focus{border-color:#FFD700!important;outline:none}
 .spot-title span{font-size:13px;color:#B3B3B3;cursor:pointer}
 .filter-row{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:4px 0 8px 0}.filter-row::-webkit-scrollbar{display:none}.filter-row button{flex-shrink:0;white-space:nowrap}
 .hrow{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}.hrow::-webkit-scrollbar{display:none}.hrow>*{flex-shrink:0;white-space:nowrap}
-/* V24 - DIMENSIONNE - TELEPHONE PROPRE - LOGO SEUL EN HAUT */
 @media (max-width: 768px){
   body{background:#0A0A12!important;font-size:13.5px}
   main{max-width:460px;margin:0 auto!important;padding-left:0!important;padding-right:0!important}
-  /* HEADER : JUSTE LOGO G - RIEN D'AUTRE */
   header{padding:8px 12px!important;background:rgba(10,10,18,.95)!important;backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.06);display:flex!important;align-items:center!important;gap:10px!important;justify-content:flex-start!important}
-  /* Bandeau artiste : petit, sans bouton soutenir */
   .top-banner{padding:9px 11px!important;border-radius:14px!important;box-shadow:0 6px 18px rgba(255,45,85,.22)}
   .top-banner h3{font-size:12.5px!important;line-height:1.25}
   .top-banner p{font-size:10.5px!important;margin-top:1px}
@@ -218,7 +247,6 @@ input:focus{border-color:#FFD700!important;outline:none}
 </aside>
 
 <main class="main-content flex-1 md:ml-[300px] md:mr-2 md:mt-2 md:mb-[90px] pb-[180px] md:pb-6 relative z-10 bg-[#121212] md:rounded-xl overflow-hidden">
-<!-- HEADER V24 : JUSTE LOGO G - RIEN D'AUTRE SUR TELEPHONE -->
 <header class="sticky top-0 z-40 bg-[#121212]/95 backdrop-blur-xl px-3 py-2.5 flex items-center gap-2.5">
 <div class="flex items-center gap-2">
 <button onclick="toggleMobileMenu()" class="md:hidden w-9 h-9 bg-white/10 rounded-full shrink-0">☰</button>
@@ -232,7 +260,6 @@ input:focus{border-color:#FFD700!important;outline:none}
 </div>
 </header>
 
-<!-- BANDEAU ARTISTE : SANS SOUTENIR, SANS "RESTE POUR TOUJOURS" -->
 <section class="px-3 md:px-6 pt-2.5"><div class="top-banner bg-gradient-to-r from-yellow-400 via-pink-500 to-cyan-400 rounded-2xl p-3 flex items-center gap-3"><div class="min-w-0"><h3 class="font-black text-black text-[13px] md:text-xl leading-tight">🎤 TU ES ARTISTE? BALANCE TON SON!</h3><p class="text-black text-[11px] md:text-sm font-bold">Single - EP - Album</p></div></div></section>
 <section class="px-3 md:px-6 pt-3"><div id="stories" class="flex gap-3 md:gap-4 overflow-x-auto pb-2"></div></section>
 
@@ -242,13 +269,11 @@ input:focus{border-color:#FFD700!important;outline:none}
 <h1 class="text-[32px] md:text-[90px] font-black leading-[0.95] mt-1">GOSPEL<br><span class="bg-gradient-to-r from-yellow-400 via-pink-500 to-cyan-400 bg-clip-text text-transparent">WORLD</span></h1>
 <p class="text-[15px] md:text-xl font-black mt-1">👑 ROYAUME DE DIEU <span class="text-[#B3B3B3] text-xs font-normal">- KINGDOM OF GOD</span></p>
 <div class="verse-box mt-2.5 bg-white/5 border border-white/10 rounded-2xl p-2.5 max-w-2xl"><p class="text-[11px] text-[#FFD700] font-black">📖 VERSET DU JOUR</p><p id="verseText" class="text-[13px] mt-1 italic leading-snug">Chargement...</p><p id="verseRef" class="text-[11px] text-[#B3B3B3] mt-1"></p></div>
-<!-- SOUTENIR N°1 : FLASH - ON GARDE CELUI-CI -->
 <div class="flash-box mt-2.5 bg-black/60 border border-[#FFD700]/40 rounded-2xl p-2.5 flex gap-2.5 items-center max-w-2xl">
 <div class="w-11 h-11 md:w-20 md:h-20 rounded-xl bg-gradient-to-br from-yellow-400 via-pink-500 to-cyan-400 flex items-center justify-center text-lg md:text-3xl font-black glow shrink-0 float">⚡</div>
 <div class="flex-1 min-w-0"><span class="bg-[#FFD700] text-black text-[9px] font-black px-2 py-0.5 rounded-full">⚡ FLASH EVANGILE WORLD</span><h3 class="font-black text-[12px] md:text-base truncate mt-0.5">FLASH EVANGILE WORLD</h3><p class="text-[11px] md:text-sm text-[#B3B3B3] truncate">La voix du Gospel dans le monde entier</p></div>
 <button onclick="openDonateGW()" class="bg-[#FFD700] text-black px-2.5 py-2 rounded-full font-black text-[10px] md:text-sm shrink-0 fire">💛 SOUTENIR<br>629-757-411</button>
 </div>
-<!-- SOUTENIR N°2 : BOUTONS - ON GARDE CELUI-CI -->
 <div class="action-row mt-2.5 flex gap-2 flex-wrap"><button onclick="startRadio()" class="gold-btn px-3.5 py-2.5 rounded-full font-black text-[11px] fire">📻 RADIO ROYAUME</button><button onclick="playFirst()" class="bg-white text-black px-3.5 py-2.5 rounded-full font-black text-[11px]">🔀 ALEATOIRE</button><button onclick="openDonateGW()" class="bg-[#FFD700] text-black px-3.5 py-2.5 rounded-full font-black text-[11px]">💛 SOUTENIR GW - 629-757-411</button><button onclick="toggleKingdom()" class="bg-purple-600 px-3.5 py-2.5 rounded-full font-black text-[11px]">👑 MODE ROYAUME</button></div>
 <div class="mt-2.5 bg-black/40 rounded-full py-1.5 overflow-hidden"><div class="marquee text-[#FFD700] text-[11px] md:text-sm font-bold">⚡ FLASH EVANGILE WORLD - 👑 ROYAUME DE DIEU - KINGDOM OF GOD - 🌍 GOSPEL WORLD GLOBAL - 💛 SOUTENIR GOSPEL WORLD - ORANGE MONEY 629-757-411 - TELECHARGEMENT HD - 👑 ROYAUME DE DIEU ⚡</div></div>
 <div id="statsBar" class="mt-2.5 grid grid-cols-4 gap-2 max-w-3xl"></div>
@@ -342,10 +367,30 @@ input:focus{border-color:#FFD700!important;outline:none}
 <form id="upForm" class="space-y-2"><input id="artist" placeholder="2 - Nom artiste - Ex: Jonathan" required class="w-full rounded-lg px-3 py-2 text-sm"><input id="titre" placeholder="3 - Titre - Ex: Mon Chant" required class="w-full rounded-lg px-3 py-2 text-sm"><input id="artistOM" placeholder="4 - Ton Orange Money / Wave - Ex: 622123456" required class="w-full rounded-lg px-3 py-2 text-sm border !border-yellow-500/50"><p class="text-[10px] md:text-xs text-[#FFD700]">💰 C'est sur ce numero que les fans vont t'envoyer les dons. 100% pour toi.</p><div id="collectionFields" class="hidden space-y-2"><textarea id="desc" placeholder="Description de ton projet..." class="w-full rounded-lg px-3 py-2 text-sm"></textarea></div><div class="border-2 border-dashed border-[#FFD700]/50 rounded-lg p-2.5 text-center"><label class="text-[11px] md:text-sm font-bold">5 - COVER (photo) 📸</label><input id="coverFile" type="file" accept="image/*" class="w-full mt-1 text-xs"></div><div class="border-2 border-dashed border-[#1DB954] rounded-lg p-2.5 text-center"><label class="text-[11px] md:text-sm font-bold">6 - FICHIERS AUDIO MP3 🎵</label><input id="files" type="file" accept=".mp3,audio/*" multiple required class="w-full mt-1 text-xs"><p id="fileInfo" class="text-[10px] text-[#FFD700] mt-1">Pour SINGLE: choisis 1 seul MP3.</p><p id="fileCount" class="text-[10px] font-black mt-1 text-white"></p></div><button class="w-full bg-[#FFD700] text-black font-black py-2.5 rounded-xl text-sm md:text-lg">🚀 PUBLIER</button><p id="status" class="text-center text-xs"></p><button type="button" onclick="closeModal()" class="w-full bg-white/10 py-2 rounded-full text-xs font-bold">❌ ANNULER / SORTIR</button></form></div></div>
 
 <script>
+// V26 - INSTALLATION VRAIE APP
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').then(() => {
+      console.log('GOSPEL WORLD installee - Service Worker OK');
+    }).catch(() => {});
+  });
+}
 let ALL=[], CURRENT=[], CURRENT_INDEX=0, FILTER='all', LIKES=JSON.parse(localStorage.getItem('gw_likes')||'[]'), COMMENTS=JSON.parse(localStorage.getItem('gw_comments')||'{}'), deferredPrompt=null, SHUFFLE=false, REPEAT=false, RADIO=false, KINGDOM=false, DONATE_TARGET={type:'gw',name:'GOSPEL WORLD',number:''}, SELECTED_TYPE='SINGLE', SELECTED_MODE='single', CURRENT_COVER='', FOLLOWED=JSON.parse(localStorage.getItem('gw_follow')||'[]');
 const audio=document.getElementById('audio'); const playBtn=document.getElementById('playBtn'); const playBtnM=document.getElementById('playBtnM');
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault(); deferredPrompt=e;});
-function installApp(){ if(deferredPrompt) deferredPrompt.prompt(); else alert("📥 Pour installer GOSPEL WORLD:\\n\\nAndroid Chrome: Menu ⋮ > Ajouter a l'ecran d'accueil\\niPhone Safari: Partager ⬆️ > Ajouter a l'ecran d'accueil"); }
+function installApp(){
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choice) => {
+      if(choice.outcome === 'accepted'){
+        alert('✅ MERCI! GOSPEL WORLD est en train de s installer sur ton téléphone! Regarde ton écran d accueil dans 5 secondes!');
+      }
+      deferredPrompt = null;
+    });
+  } else {
+    alert("📥 Pour installer GOSPEL WORLD comme TikTok:\\n\\n1. Clique sur les 3 points ⋮ en haut à droite de Chrome\\n2. Clique sur 'Installer l'application' ou 'Ajouter à l'écran d'accueil'\\n3. Clique sur 'Installer'\\n\\nL'icône GOSPEL WORLD va apparaître sur ton écran d'accueil!");
+  }
+}
 function toggleKingdom(){ KINGDOM=!KINGDOM; document.body.style.background=KINGDOM?'linear-gradient(180deg,#1A0F00,#2D0A4A,#000)':'#08080F'; alert(KINGDOM?'👑 MODE ROYAUME ACTIVE - Bienvenue dans le Royaume de Dieu!':'Mode normal'); }
 function createStars(){ let c=document.getElementById('stars'); for(let i=0;i<30;i++){ let s=document.createElement('div'); s.className='star'; let sz=Math.random()*3+1; s.style.width=sz+'px'; s.style.height=sz+'px'; s.style.left=Math.random()*100+'vw'; s.style.animationDuration=(Math.random()*4+3)+'s'; s.style.animationDelay=Math.random()*4+'s'; s.style.opacity=Math.random(); c.appendChild(s); } }
 createStars();
@@ -430,7 +475,7 @@ function render(){
   }).join('')||'<p class="col-span-full text-center py-10 text-[#B3B3B3]">Aucun resultat - Publie le premier projet sur FLASH EVANGILE WORLD 🌍👑</p>';
 }
 function playFirst(){ if(!ALL.length) return alert('Pas encore de sons - Publie sur FLASH EVANGILE WORLD'); playSingle(ALL[Math.floor(Math.random()*ALL.length)].id); }
-function playSingle(id){let s=ALL.find(x=>x.id===id); if(s.type==='SINGLE'){ CURRENT=[{title:s.title,artist:s.artist,file:s.file,id:s.id,cover:s.cover,type:s.type}]; } else { CURRENT=s.songs.map(x=>({title:x.title,artist:s.artist,file:x.file,id:s.id,cover:s.cover,type:s.type})); } CURRENT_INDEX=0; playCurrent();}
+function playSingle(id){let s=ALL.find(x=>x.id===id); if(s.type==='SINGLE'){ CURRENT=[{title:s.title,artist:s.artist,file:s.file,id:s.id,cover:s.cover,type:s.type}]; } else { CURRENT=s.songs.map(x=>({title:x.title,artist:s.artist,file:x.file,id:s.id,cover:x.cover,type:s.type})); } CURRENT_INDEX=0; playCurrent();}
 function playCollection(id,start=0){let c=ALL.find(x=>x.id===id); if(c.type==='SINGLE'){ CURRENT=[{title:c.title,artist:c.artist,file:c.file,id:c.id,cover:c.cover,type:c.type}]; } else { CURRENT=c.songs.map(s=>({title:s.title,artist:c.artist,file:s.file,id:c.id,cover:c.cover,type:c.type})); } CURRENT_INDEX=start; playCurrent(c.title);}
 function playCurrent(coll=''){let s=CURRENT[CURRENT_INDEX]; if(!s) return; let it=ALL.find(x=>x.id===s.id); let cover=s.cover||(it?it.cover:''); CURRENT_COVER=cover; document.getElementById('ptitle').innerText=s.title; document.getElementById('partist').innerText=s.artist; document.getElementById('cover').src=cover; document.getElementById('fullCover').src=cover; document.getElementById('fullArtistPhoto').src=cover; document.getElementById('fullBg').style.backgroundImage=`url(${cover})`; document.getElementById('fullTitle').innerText=s.title; document.getElementById('fullArtist').innerText=s.artist+' ✅'; document.getElementById('fullType').innerText='🎵 '+(s.type||'SINGLE')+' - 🌍 Mondial - 👑 Royaume de Dieu'; document.getElementById('playlistInfo').innerText=coll||'Single'; audio.src=s.file; audio.play(); setPlayIcon(true); startViz();}
 function setPlayIcon(p){ let h=p?'<i class="fa-solid fa-pause"></i>':'<i class="fa-solid fa-play"></i>'; playBtn.innerHTML=h; playBtnM.innerHTML=h; document.getElementById('fullPlayBtn').innerHTML=h; }
@@ -456,6 +501,54 @@ document.getElementById('upForm').onsubmit=async e=>{ e.preventDefault(); let mo
 load();
 </script></body></html>
     """
+@app.route("/icon-192.png")
+def icon192():
+    if not HAS_PIL:
+        return "PIL manquant", 500
+    return send_file(make_gospel_icon(192), mimetype="image/png")
+@app.route("/icon-512.png")
+def icon512():
+    if not HAS_PIL:
+        return "PIL manquant", 500
+    return send_file(make_gospel_icon(512), mimetype="image/png")
+@app.route("/manifest.json")
+def manifest():
+    return jsonify({
+        "name": "GOSPEL WORLD - ROYAUME DE DIEU",
+        "short_name": "GOSPEL WORLD",
+        "description": "FLASH EVANGILE WORLD - ROYAUME DE DIEU",
+        "start_url": "/?source=pwa",
+        "scope": "/",
+        "display": "standalone",
+        "orientation": "portrait",
+        "background_color": "#0A0A12",
+        "theme_color": "#FFD700",
+        "icons": [
+            {"src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+            {"src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+            {"src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+        ]
+    })
+@app.route("/sw.js")
+def sw():
+    js = """
+const CACHE = 'gospel-world-v26';
+self.addEventListener('install', e => { self.skipWaiting(); });
+self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
+self.addEventListener('fetch', e => {
+  if (e.request.method !== 'GET') return;
+  e.respondWith(
+    fetch(e.request).then(res => {
+      const copy = res.clone();
+      if (e.request.url.startsWith(self.location.origin)) {
+        caches.open(CACHE).then(c => c.put(e.request, copy));
+      }
+      return res;
+    }).catch(() => caches.match(e.request))
+  );
+});
+"""
+    return js, 200, {'Content-Type': 'application/javascript', 'Cache-Control': 'no-cache'}
 @app.route("/api/gw-number")
 def gw_number():
     return jsonify({"number": GOSPEL_OM, "display": GOSPEL_OM_DISPLAY})
@@ -464,9 +557,6 @@ def verse():
     idx = datetime.date.today().toordinal() % len(VERSETS)
     ref, text = VERSETS[idx]
     return jsonify({"ref": ref, "text": text})
-@app.route("/manifest.json")
-def manifest():
-    return jsonify({"name":"GOSPEL WORLD - ROYAUME DE DIEU","short_name":"GOSPEL WORLD","start_url":"/","display":"standalone","background_color":"#0A0A12","theme_color":"#FFD700","icons":[{"src":"https://picsum.photos/seed/gospel/512","sizes":"512x512","type":"image/png"}]})
 @app.route("/api/all")
 def api_all():
     singles=load_json("songs.json",[]); colls=load_json("collections.json",[]); items=[]
@@ -492,7 +582,7 @@ def upload_single():
             c=cloudinary.uploader.upload(request.files["cover"], folder="gospelworld/covers"); cover_url=c["secure_url"]
         res=cloudinary.uploader.upload(files[0], resource_type="video", folder="gospelworld/singles")
         songs=load_json("songs.json",[]); songs.insert(0,{"id":uuid.uuid4().hex[:8],"title":title,"artist":artist,"artist_om":artist_om,"file":res["secure_url"],"cover":cover_url,"likes":0,"created":uuid.uuid4().hex}); save_json("songs.json",songs)
-        return jsonify({"success":True,"message":f"SINGLE '{title}' sauvegarde! Dons vers {artist_om}"})
+        return jsonify({"success":True,"message":f"SINGLE '{title}' sauvegarde pour toujours! 🔒 Dons vers {artist_om}"})
     except Exception as e: return jsonify({"success":False,"message":f"Erreur: {e}"})
 @app.route("/upload-collection", methods=["POST"])
 def upload_collection():
@@ -508,7 +598,7 @@ def upload_collection():
             res=cloudinary.uploader.upload(f, resource_type="video", folder=f"gospelworld/{ptype.lower().replace(' ','_')}")
             songs_list.append({"title":st,"file":res["secure_url"]})
         colls=load_json("collections.json",[]); colls.insert(0,{"id":uuid.uuid4().hex[:8],"type":ptype,"title":title,"artist":artist,"artist_om":artist_om,"desc":desc,"cover":cover_url,"songs":songs_list,"likes":0,"created":uuid.uuid4().hex}); save_json("collections.json",colls)
-        return jsonify({"success":True,"message":f"{ptype} '{title}' sauvegarde avec {len(songs_list)} Sons!"})
+        return jsonify({"success":True,"message":f"{ptype} '{title}' sauvegarde avec {len(songs_list)} Sons! 🔒"})
     except Exception as e: return jsonify({"success":False,"message":f"Erreur: {e}"})
 if __name__=="__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT",5000)))
