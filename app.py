@@ -114,20 +114,42 @@ input,select,textarea{background:#232323!important;color:#fff!important;border:1
 #mobileMenu{transition:transform .3s ease}
 #mobileMenu.closed{transform:translateX(-100%)}
 #mobileMenu.open{transform:translateX(0)}
-/* ===== V15 - SPOTIFY EXACT - UNIQUEMENT TELEPHONE ===== */
 .spotify-row{display:none}
+/* ===== V16 - TOUT GLISSE SUR TEL - RIEN N'EST COUPE ===== */
 @media (max-width: 768px){
   body{font-size:13px;background:#000!important}
-  .hero-grad{padding-top:10px!important;padding-bottom:10px!important}
-  .hero-grad h1{font-size:34px!important;line-height:.9!important}
-  .hero-grad button{padding:7px 12px!important;font-size:11px!important}
-  #statsBar{gap:6px!important;margin-top:10px!important}
+  /* PARTIE JAUNE EN HAUT REDUITE - COMPACTE */
+  .top-banner{padding:8px!important;border-radius:12px!important}
+  .top-banner h3{font-size:13px!important}
+  .top-banner p{font-size:10px!important}
+  .top-banner button{padding:7px 12px!important;font-size:11px!important}
+  /* HERO COMPACT */
+  .hero-grad{padding-top:8px!important;padding-bottom:8px!important;padding-left:12px!important;padding-right:12px!important}
+  .hero-grad h1{font-size:30px!important;line-height:.9!important;margin-top:4px!important}
+  .hero-grad .verse-box{padding:8px!important;margin-top:8px!important}
+  .hero-grad .verse-box p{font-size:12px!important}
+  .hero-grad .flash-box{padding:8px!important;margin-top:8px!important}
+  .hero-grad .flash-box h3{font-size:13px!important}
+  .hero-grad .flash-box p{font-size:11px!important}
+  /* BOUTONS RADIO / ALEATOIRE / SOUTENIR : LIGNE QUI GLISSE, RIEN DE COUPE */
+  .action-row{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;gap:8px!important;padding-bottom:4px!important;scrollbar-width:none}
+  .action-row::-webkit-scrollbar{display:none}
+  .action-row button{flex-shrink:0!important;white-space:nowrap!important;padding:8px 14px!important;font-size:11px!important}
+  /* STATS : LIGNE QUI GLISSE */
+  #statsBar{display:flex!important;overflow-x:auto!important;gap:8px!important;scrollbar-width:none;padding-bottom:2px}
+  #statsBar::-webkit-scrollbar{display:none}
+  #statsBar div{flex:0 0 82px!important;padding:8px 4px!important}
+  /* DRAPEAUX : LIGNE QUI GLISSE */
+  .flags-row{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;gap:6px!important;scrollbar-width:none;padding-bottom:2px}
+  .flags-row::-webkit-scrollbar{display:none}
+  .flags-row span{flex-shrink:0!important;white-space:nowrap!important}
+  /* FILTRES Tout / Single / EP / Album : LIGNE QUI GLISSE - LE PLUS IMPORTANT */
+  .filter-row{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;gap:6px!important;scrollbar-width:none;padding:2px 0 6px 0!important}
+  .filter-row::-webkit-scrollbar{display:none}
+  .filter-row button{flex-shrink:0!important;white-space:nowrap!important;padding:7px 12px!important;font-size:11px!important}
   #search{padding:9px 14px!important;font-size:13px!important}
-  .tab-btn{padding:6px 10px!important;font-size:11px!important}
-  /* ON CACHE LA GRILLE CLASSIQUE SUR TELEPHONE, ON MET SPOTIFY A LA PLACE */
   #grid{display:none!important}
   .spotify-row{display:block!important}
-  /* LIGNE SPOTIFY : defile horizontal, pas de barre, 2 covers et demi visibles */
   .spot-row{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 12px 4px 12px;scrollbar-width:none}
   .spot-row::-webkit-scrollbar{display:none}
   .spot-card{flex:0 0 148px;scroll-snap-align:start;cursor:pointer}
@@ -136,12 +158,12 @@ input,select,textarea{background:#232323!important;color:#fff!important;border:1
   .spot-card p{font-size:14px;font-weight:600;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .spot-card span{font-size:12px;color:#B3B3B3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
   .spot-title{font-size:20px;font-weight:800;padding:18px 12px 10px 12px}
-  /* Le reste plus petit */
   #stories .story-ring{width:50px!important;height:50px!important}
   h2{font-size:16px!important}
   #top10{display:none!important}
   #artists{display:none!important}
   .publish-float{bottom:158px!important;padding:8px 12px!important;font-size:11px!important;right:8px!important}
+  .marquee-wrap{overflow:hidden}
 }
 </style></head><body>
 <div id="stars"></div>
@@ -198,27 +220,27 @@ input,select,textarea{background:#232323!important;color:#fff!important;border:1
 <button onclick="openModal('single')" class="gold-btn px-4 py-2 rounded-full font-black text-sm whitespace-nowrap">➕ PUBLIER</button>
 </div></header>
 
-<section class="px-4 md:px-8 pt-4"><div class="bg-gradient-to-r from-yellow-400 via-pink-500 to-cyan-400 rounded-[20px] p-4 flex flex-col md:flex-row items-center justify-between gap-3"><div><h3 class="font-black text-black text-xl">🎤 TU ES ARTISTE? BALANCE TON SON ICI!</h3><p class="text-black text-sm font-bold">Single - EP - Mixtape - Album - Live - Acapella - Worship - Ton son reste pour toujours! 🔒 100% Gratuit</p></div><button onclick="openModal('single')" class="bg-black text-white px-8 py-3 rounded-full font-black text-lg whitespace-nowrap pulse-ring">➕ PUBLIER MON SON</button></div></section>
+<section class="px-4 md:px-8 pt-4"><div class="top-banner bg-gradient-to-r from-yellow-400 via-pink-500 to-cyan-400 rounded-[20px] p-4 flex flex-col md:flex-row items-center justify-between gap-3"><div><h3 class="font-black text-black text-xl">🎤 TU ES ARTISTE? BALANCE TON SON ICI!</h3><p class="text-black text-sm font-bold">Single - EP - Mixtape - Album - Live - Acapella - Worship - Ton son reste pour toujours! 🔒 100% Gratuit</p></div><button onclick="openModal('single')" class="bg-black text-white px-8 py-3 rounded-full font-black text-lg whitespace-nowrap pulse-ring shrink-0">➕ PUBLIER MON SON</button></div></section>
 <section class="px-4 md:px-8 pt-5"><div id="stories" class="flex gap-4 overflow-x-auto pb-2"></div></section>
 <section class="hero-grad px-4 md:px-8 pt-6 pb-8">
 <div class="flex items-end gap-1 h-10"><div class="bar"></div><div class="bar" style="animation-delay:.1s"></div><div class="bar" style="animation-delay:.2s"></div><div class="bar" style="animation-delay:.3s"></div><div class="bar" style="animation-delay:.4s"></div><div class="bar" style="animation-delay:.5s"></div><div class="bar" style="animation-delay:.6s"></div><div class="bar" style="animation-delay:.7s"></div><div class="bar" style="animation-delay:.8s"></div></div>
 <p class="text-[#FFD700] text-xs font-black tracking-[3px] mt-3">🌌 DIMENSION CIEL - ROYAUME DE DIEU</p>
 <h1 class="text-[48px] md:text-[110px] font-black leading-[0.85] mt-2">GOSPEL<br><span class="bg-gradient-to-r from-yellow-400 via-pink-500 to-cyan-400 bg-clip-text text-transparent">WORLD</span></h1>
 <p class="text-xl md:text-2xl font-black mt-2">👑 ROYAUME DE DIEU <span class="text-[#B3B3B3] text-sm font-normal">- KINGDOM OF GOD</span></p>
-<div class="mt-4 bg-white/5 border border-white/10 rounded-2xl p-4 max-w-2xl"><p class="text-xs text-[#FFD700] font-black">📖 VERSET DU JOUR</p><p id="verseText" class="text-sm mt-1 italic">Chargement...</p><p id="verseRef" class="text-xs text-[#B3B3B3] mt-1"></p></div>
-<div class="mt-6 bg-black/60 border border-[#FFD700]/40 rounded-[25px] p-4 flex gap-4 items-center max-w-2xl backdrop-blur">
+<div class="verse-box mt-4 bg-white/5 border border-white/10 rounded-2xl p-4 max-w-2xl"><p class="text-xs text-[#FFD700] font-black">📖 VERSET DU JOUR</p><p id="verseText" class="text-sm mt-1 italic">Chargement...</p><p id="verseRef" class="text-xs text-[#B3B3B3] mt-1"></p></div>
+<div class="flash-box mt-6 bg-black/60 border border-[#FFD700]/40 rounded-[25px] p-4 flex gap-4 items-center max-w-2xl backdrop-blur">
 <div class="w-16 h-16 md:w-24 md:h-24 rounded-2xl bg-gradient-to-br from-yellow-400 via-pink-500 to-cyan-400 flex items-center justify-center text-3xl md:text-4xl font-black glow shrink-0 float">⚡</div>
-<div class="flex-1 min-w-0"><span class="bg-[#FFD700] text-black text-[10px] font-black px-2 py-1 rounded-full">⚡ FLASH EVANGILE WORLD</span><h3 class="font-black text-base md:text-lg truncate mt-1">FLASH EVANGILE WORLD</h3><p class="text-xs md:text-sm text-[#B3B3B3]">La voix du Gospel dans le monde entier - Soutenez la mission</p></div>
+<div class="flex-1 min-w-0"><span class="bg-[#FFD700] text-black text-[10px] font-black px-2 py-1 rounded-full">⚡ FLASH EVANGILE WORLD</span><h3 class="font-black text-base md:text-lg truncate mt-1">FLASH EVANGILE WORLD</h3><p class="text-xs md:text-sm text-[#B3B3B3] truncate">La voix du Gospel dans le monde entier - Soutenez la mission</p></div>
 <button onclick="openDonateGW()" class="bg-[#FFD700] text-black px-3 md:px-4 py-2 md:py-3 rounded-full font-black text-xs md:text-sm shrink-0 fire">💛 SOUTENIR<br>629-757-411</button>
 </div>
-<div class="mt-5 flex gap-2 md:gap-3 flex-wrap"><button onclick="startRadio()" class="gold-btn px-4 md:px-6 py-2 md:py-3 rounded-full font-black text-xs md:text-sm fire">📻 RADIO ROYAUME</button><button onclick="playFirst()" class="bg-white text-black px-4 md:px-6 py-2 md:py-3 rounded-full font-black text-xs md:text-sm">🔀 ALEATOIRE</button><button onclick="openDonateGW()" class="bg-[#FFD700] text-black px-4 md:px-6 py-2 md:py-3 rounded-full font-black text-xs md:text-sm">💛 SOUTENIR GW - 629-757-411</button><button onclick="toggleKingdom()" class="bg-purple-600 px-4 md:px-6 py-2 md:py-3 rounded-full font-black text-xs md:text-sm">👑 MODE ROYAUME</button><button onclick="openModal('single')" class="bg-[#FFD700] text-black px-4 md:px-6 py-2 md:py-3 rounded-full font-black text-xs md:text-sm">➕ PUBLIER MON SON</button></div>
-<div class="mt-5 bg-black/40 rounded-full py-2 overflow-hidden"><div class="marquee text-[#FFD700] text-sm font-bold">⚡ FLASH EVANGILE WORLD - 👑 ROYAUME DE DIEU - KINGDOM OF GOD - 🌍 GOSPEL WORLD GLOBAL - 💛 SOUTENIR GOSPEL WORLD - ORANGE MONEY 629-757-411 - TELECHARGEMENT HD GRATUIT - 🔒 TES SONS RESTENT POUR TOUJOURS - 100% GRATUIT - 👑 ROYAUME DE DIEU ⚡</div></div>
+<div class="action-row mt-5 flex gap-2 md:gap-3 flex-wrap"><button onclick="startRadio()" class="gold-btn px-4 md:px-6 py-2 md:py-3 rounded-full font-black text-xs md:text-sm fire">📻 RADIO ROYAUME DE DIEU</button><button onclick="playFirst()" class="bg-white text-black px-4 md:px-6 py-2 md:py-3 rounded-full font-black text-xs md:text-sm">🔀 LECTURE ALEATOIRE</button><button onclick="openDonateGW()" class="bg-[#FFD700] text-black px-4 md:px-6 py-2 md:py-3 rounded-full font-black text-xs md:text-sm">💛 SOUTENIR GW - 629-757-411</button><button onclick="toggleKingdom()" class="bg-purple-600 px-4 md:px-6 py-2 md:py-3 rounded-full font-black text-xs md:text-sm">👑 MODE ROYAUME</button><button onclick="openModal('single')" class="bg-[#FFD700] text-black px-4 md:px-6 py-2 md:py-3 rounded-full font-black text-xs md:text-sm">➕ PUBLIER MON SON</button></div>
+<div class="marquee-wrap mt-5 bg-black/40 rounded-full py-2 overflow-hidden"><div class="marquee text-[#FFD700] text-sm font-bold">⚡ FLASH EVANGILE WORLD - 👑 ROYAUME DE DIEU - KINGDOM OF GOD - 🌍 GOSPEL WORLD GLOBAL - 💛 SOUTENIR GOSPEL WORLD - ORANGE MONEY 629-757-411 - TELECHARGEMENT HD GRATUIT - 🔒 TES SONS RESTENT POUR TOUJOURS - 100% GRATUIT - 👑 ROYAUME DE DIEU ⚡</div></div>
 <div id="statsBar" class="mt-5 grid grid-cols-4 gap-2 md:gap-3 max-w-3xl"></div>
-<div class="mt-4 flex gap-2 flex-wrap max-w-3xl"><span class="bg-white/10 px-3 py-1 rounded-full text-xs">🇬🇳 Guinée</span><span class="bg-white/10 px-3 py-1 rounded-full text-xs">🇫🇷 France</span><span class="bg-white/10 px-3 py-1 rounded-full text-xs">🇺🇸 USA</span><span class="bg-white/10 px-3 py-1 rounded-full text-xs">🇨🇮 Côte d'Ivoire</span><span class="bg-white/10 px-3 py-1 rounded-full text-xs">🇨🇦 Canada</span><span class="bg-[#FFD700] text-black px-3 py-1 rounded-full text-xs font-black">🌍 + 120 PAYS</span></div>
+<div class="flags-row mt-4 flex gap-2 flex-wrap max-w-3xl"><span class="bg-white/10 px-3 py-1 rounded-full text-xs">🇬🇳 Guinée</span><span class="bg-white/10 px-3 py-1 rounded-full text-xs">🇫🇷 France</span><span class="bg-white/10 px-3 py-1 rounded-full text-xs">🇺🇸 USA</span><span class="bg-white/10 px-3 py-1 rounded-full text-xs">🇨🇮 Côte d'Ivoire</span><span class="bg-white/10 px-3 py-1 rounded-full text-xs">🇨🇦 Canada</span><span class="bg-[#FFD700] text-black px-3 py-1 rounded-full text-xs font-black">🌍 + 120 PAYS</span></div>
 </section>
 <section class="px-4 md:px-8 mt-6">
 <input id="search" oninput="render()" placeholder="🔍 Recherche artiste, titre... dans le monde entier" class="w-full rounded-full px-5 py-3 outline-none">
-<div class="mt-4 flex gap-2 flex-wrap">
+<div class="filter-row mt-4 flex gap-2 flex-wrap">
 <button onclick="showTab('all',this)" class="tab-btn pill-active chip px-3 md:px-4 py-2 rounded-full text-xs md:text-sm font-bold">Tout</button>
 <button onclick="showTab('SINGLE',this)" class="tab-btn chip px-3 md:px-4 py-2 rounded-full text-xs md:text-sm font-bold">🎵 Single</button>
 <button onclick="showTab('EP',this)" class="tab-btn chip px-3 md:px-4 py-2 rounded-full text-xs md:text-sm font-bold">📀 EP</button>
@@ -230,10 +252,9 @@ input,select,textarea{background:#232323!important;color:#fff!important;border:1
 <button onclick="showTab('TOP',this)" class="tab-btn chip px-3 md:px-4 py-2 rounded-full text-xs md:text-sm font-bold">🌍 Top Mondial</button>
 <button onclick="showTab('LIKED',this)" class="tab-btn chip px-3 md:px-4 py-2 rounded-full text-xs md:text-sm font-bold">❤️ Likes</button>
 </div>
-<h2 id="sectionTitle" class="text-2xl font-black mt-8">⚡ FLASH ÉVANGILE WORLD</h2><p class="text-[#B3B3B3] text-sm hidden md:block">Single - EP - Mixtape - Album - Live - Acapella - Worship - HD Gratuit - Sons pour toujours 🔒</p>
+<h2 id="sectionTitle" class="text-2xl font-black mt-4 md:mt-8">⚡ FLASH ÉVANGILE WORLD</h2><p class="text-[#B3B3B3] text-sm hidden md:block">Single - EP - Mixtape - Album - Live - Acapella - Worship - HD Gratuit - Sons pour toujours 🔒</p>
 </section>
 
-<!-- ===== V15 - SPOTIFY SUR TELEPHONE : LIGNES HORIZONTALES ===== -->
 <div class="spotify-row">
   <div class="spot-title">Titres tendance 🔥</div>
   <div id="spotTrending" class="spot-row"></div>
@@ -258,7 +279,6 @@ input,select,textarea{background:#232323!important;color:#fff!important;border:1
 <div class="flex items-center gap-2 ml-auto"><button onclick="openFullPlayer()" class="hidden md:flex w-10 h-10 bg-white/10 rounded-full items-center justify-center"><i class="fa-solid fa-expand"></i></button><button onclick="shareCurrent()" class="w-9 h-9 md:w-10 md:h-10 bg-white/10 rounded-full"><i class="fa-solid fa-share-nodes"></i></button><button onclick="downloadCurrent()" class="w-9 h-9 md:w-10 md:h-10 bg-[#1DB954] rounded-full"><i class="fa-solid fa-download"></i></button><button id="playBtnM" class="md:hidden w-11 h-11 bg-[#FFD700] text-black rounded-full shrink-0"><i class="fa-solid fa-play"></i></button></div>
 </div><div class="md:hidden mt-2"><div class="w-full bg-white/20 h-1 rounded-full"><div id="progM" class="h-1 bg-[#FFD700] rounded-full w-0"></div></div></div><audio id="audio" class="hidden"></audio></div>
 
-<!-- BARRE BAS SPOTIFY : Accueil / Rechercher / Bibliotheque / Premium -> Ici : Accueil / Rechercher / Publier / Top / Menu -->
 <div class="md:hidden fixed bottom-0 w-full bg-black border-t border-white/10 z-[60] flex justify-around py-2 pb-3">
 <button onclick="goHome()" class="mob-nav-btn flex flex-col items-center text-xs font-bold"><span class="text-xl">🏠</span>Accueil</button>
 <button onclick="document.getElementById('search').focus();window.scrollTo({top:650,behavior:'smooth'})" class="mob-nav-btn flex flex-col items-center text-xs"><span class="text-xl">🔍</span>Rechercher</button>
@@ -343,7 +363,7 @@ function selectType(type, label, mode){
   document.getElementById('upForm').dataset.ptype=type;
 }
 document.getElementById('files').addEventListener('change', function(){ let n=this.files.length; document.getElementById('fileCount').innerText='✅ Tu as choisi '+n+' fichier(s) pour '+SELECTED_TYPE+' - Parfait!'; });
-function goHome(){ FILTER='all'; document.getElementById('search').value=''; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function goHome(){ FILTER='all'; document.getElementById('search').value=''; render(); renderSpotify(); window.scrollTo({top:0,behavior:'smooth'}); }
 function toggleShuffle(){ SHUFFLE=!SHUFFLE; document.getElementById('shuffleBtn').style.color=SHUFFLE?'#FFD700':'#B3B3B3'; }
 function toggleRepeat(){ REPEAT=!REPEAT; document.getElementById('repeatBtn').style.color=REPEAT?'#FFD700':'#B3B3B3'; }
 function fmt(s){ if(!s) return '0:00'; return Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0'); }
@@ -363,7 +383,6 @@ function showTab(f,btn){ FILTER=f; document.querySelectorAll('.tab-btn').forEach
 function toggleLike(id){ if(LIKES.includes(id)) LIKES=LIKES.filter(x=>x!==id); else LIKES.push(id); localStorage.setItem('gw_likes',JSON.stringify(LIKES)); render(); renderTop(); renderSpotify(); fetch('/api/like',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})}); }
 function renderStats(){ let artists=new Set(ALL.map(x=>x.artist)).size; let likes=ALL.reduce((a,x)=>a+(x.likes||0),0); document.getElementById('statsBar').innerHTML=`<div class='bg-white/5 rounded-2xl p-2 md:p-3 text-center border border-yellow-500/20'><b class='text-lg md:text-xl text-[#FFD700]'>${ALL.length}</b><p class='text-[10px] md:text-xs text-[#B3B3B3]'>Projets</p></div><div class='bg-white/5 rounded-2xl p-2 md:p-3 text-center border border-yellow-500/20'><b class='text-lg md:text-xl text-[#FFD700]'>${artists}</b><p class='text-[10px] md:text-xs text-[#B3B3B3]'>Artistes ✅</p></div><div class='bg-white/5 rounded-2xl p-2 md:p-3 text-center border border-yellow-500/20'><b class='text-lg md:text-xl text-[#FFD700]'>${likes}</b><p class='text-[10px] md:text-xs text-[#B3B3B3]'>Likes</p></div><div class='bg-gradient-to-br from-yellow-500 to-pink-500 rounded-2xl p-2 md:p-3 text-center'><b class='text-base md:text-xl text-black'>🌍 120+</b><p class='text-[10px] md:text-xs text-black font-bold'>Pays</p></div>`; let ss=document.getElementById('statsSide'); if(ss) ss.innerText=`${ALL.length} projets - ${artists} artistes - 🌍 Mondial`; }
 function renderStories(){ let map={}; ALL.forEach(x=>{ if(!map[x.artist]) map[x.artist]=x.cover; }); document.getElementById('stories').innerHTML=Object.entries(map).map(([n,c])=>`<div onclick="openArtist('${n}')" class='shrink-0 text-center cursor-pointer'><div class='story-ring w-[68px] h-[68px]'><img src='${c}' class='w-full h-full rounded-full object-cover border-2 border-black'></div><p class='text-[11px] mt-1 truncate w-[68px]'>${n} ✅</p></div>`).join(''); }
-// ===== V15 - SPOTIFY ROWS : 20 covers par ligne, tu glisses =====
 function renderSpotify(){
   let q=(document.getElementById('search').value||'').toLowerCase();
   let list=ALL.filter(x=>{ if(FILTER==='LIKED' && !LIKES.includes(x.id)) return false; if(FILTER!=='all' && FILTER!=='LIKED' && FILTER!=='TOP' && x.type!==FILTER) return false; if(q && !(x.title.toLowerCase().includes(q)||x.artist.toLowerCase().includes(q))) return false; return true; });
@@ -374,7 +393,6 @@ function renderSpotify(){
   let el1=document.getElementById('spotTrending'); if(el1) el1.innerHTML=trending.map(card).join('')||'<p style="padding:0 12px;color:#888">Pas encore de titre - Publie le premier!</p>';
   let el3=document.getElementById('spotAlbums'); if(el3) el3.innerHTML=albums.map(card).join('')||'<p style="padding:0 12px;color:#888">Pas encore - Publie!</p>';
   let el4=document.getElementById('spotNew'); if(el4) el4.innerHTML=news.map(card).join('')||'';
-  // Artistes populaires - photo RONDE comme Spotify
   let map={}; ALL.forEach(x=>{ if(!map[x.artist]) map[x.artist]=x; });
   let el2=document.getElementById('spotArtists'); if(el2) el2.innerHTML=Object.entries(map).map(([name,info])=>`<div class="spot-card artist" onclick="openArtist('${name}')"><img src="${info.cover}"><p>${name}</p><span>Artiste ✅</span></div>`).join('')||'';
 }
