@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, send_file
-import json, os, uuid, random, urllib.request, datetime
+import json, os, uuid, random, urllib.request, datetime, base64
 from io import BytesIO
 import cloudinary
 import cloudinary.uploader
@@ -7,14 +7,21 @@ from dotenv import load_dotenv
 load_dotenv()
 app = Flask(__name__)
 
-# ===== ICONE G DOREE - FAITE PAR TON PROPRE SERVEUR - POUR INSTALLATION =====
+# ===== ICONE G DOREE - V27 - MARCHE MEME SANS PIL =====
 try:
     from PIL import Image, ImageDraw, ImageFont
     HAS_PIL = True
 except:
     HAS_PIL = False
 
+# Petit PNG de secours si PIL n'est pas la - 1x1 transparent, Chrome accepte
+FALLBACK_PNG_B64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
+
 def make_gospel_icon(size):
+    if not HAS_PIL:
+        buf = BytesIO(base64.b64decode(FALLBACK_PNG_B64))
+        buf.seek(0)
+        return buf
     img = Image.new("RGB", (size, size), (10, 10, 18))
     d = ImageDraw.Draw(img)
     d.ellipse([size*0.05, size*0.05, size*0.95, size*0.95], fill=(255, 215, 0))
@@ -94,6 +101,7 @@ def home():
 <title>GOSPEL WORLD - FLASH EVANGILE WORLD - ROYAUME DE DIEU</title>
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/icon-192.png">
+<link rel="icon" type="image/png" href="/icon-192.png">
 <meta name="theme-color" content="#FFD700">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -202,7 +210,6 @@ input:focus{border-color:#FFD700!important;outline:none}
 }
 </style></head><body>
 <div id="stars"></div>
-
 <div id="mobileMenu" class="closed fixed top-0 left-0 w-[280px] h-full bg-[#121212] z-[300] p-4 overflow-y-auto border-r border-white/10">
 <div class="flex justify-between items-center"><div class="flex items-center gap-2"><div class="w-10 h-10 bg-white rounded-full flex items-center justify-center font-black text-xl text-black">G</div><div><b>GOSPEL <span class="text-[#1DB954]">WORLD</span></b><p class="text-[10px] text-[#B3B3B3]">ROYAUME DE DIEU</p></div></div><button onclick="toggleMobileMenu()" class="w-9 h-9 bg-white rounded-full text-black font-black">✕</button></div>
 <button onclick="toggleMobileMenu();openModal('single')" class="mt-5 w-full bg-[#FFD700] text-black font-black py-3 rounded-full">➕ PUBLIER UN SON 🎤</button>
@@ -221,7 +228,6 @@ input:focus{border-color:#FFD700!important;outline:none}
 <p class="text-[11px] text-[#B3B3B3] mt-4">© 2026 GOSPEL WORLD - FLASH EVANGILE WORLD</p>
 </div>
 <div id="mobileOverlay" onclick="toggleMobileMenu()" class="hidden fixed inset-0 bg-black/70 z-[290]"></div>
-
 <div class="flex relative z-10">
 <aside class="sidebar hidden md:flex flex-col w-[290px] fixed left-2 top-2 bottom-[90px] p-3 z-50 overflow-y-auto bg-[#121212] rounded-xl">
 <div class="bg-[#121212] rounded-xl p-2">
@@ -245,7 +251,6 @@ input:focus{border-color:#FFD700!important;outline:none}
 <div class="mt-4 text-[11px] text-[#B3B3B3] px-2 pb-2"><p id="statsSide">...</p><p>© 2026 GOSPEL WORLD</p></div>
 </div>
 </aside>
-
 <main class="main-content flex-1 md:ml-[300px] md:mr-2 md:mt-2 md:mb-[90px] pb-[180px] md:pb-6 relative z-10 bg-[#121212] md:rounded-xl overflow-hidden">
 <header class="sticky top-0 z-40 bg-[#121212]/95 backdrop-blur-xl px-3 py-2.5 flex items-center gap-2.5">
 <div class="flex items-center gap-2">
@@ -259,10 +264,8 @@ input:focus{border-color:#FFD700!important;outline:none}
 <div class="w-9 h-9 bg-gradient-to-br from-yellow-400 to-pink-500 rounded-full flex items-center justify-center font-black">G</div>
 </div>
 </header>
-
 <section class="px-3 md:px-6 pt-2.5"><div class="top-banner bg-gradient-to-r from-yellow-400 via-pink-500 to-cyan-400 rounded-2xl p-3 flex items-center gap-3"><div class="min-w-0"><h3 class="font-black text-black text-[13px] md:text-xl leading-tight">🎤 TU ES ARTISTE? BALANCE TON SON!</h3><p class="text-black text-[11px] md:text-sm font-bold">Single - EP - Album</p></div></div></section>
 <section class="px-3 md:px-6 pt-3"><div id="stories" class="flex gap-3 md:gap-4 overflow-x-auto pb-2"></div></section>
-
 <section class="hero-grad px-3 md:px-6 pt-3 pb-4">
 <div class="flex items-end gap-1 h-6"><div class="bar"></div><div class="bar" style="animation-delay:.1s"></div><div class="bar" style="animation-delay:.2s"></div><div class="bar" style="animation-delay:.3s"></div><div class="bar" style="animation-delay:.4s"></div><div class="bar" style="animation-delay:.5s"></div><div class="bar" style="animation-delay:.6s"></div></div>
 <p class="text-[#FFD700] text-[10px] font-black tracking-[2px] mt-1.5">🌌 DIMENSION CIEL - ROYAUME DE DIEU</p>
@@ -279,7 +282,6 @@ input:focus{border-color:#FFD700!important;outline:none}
 <div id="statsBar" class="mt-2.5 grid grid-cols-4 gap-2 max-w-3xl"></div>
 <div class="flags-row mt-2.5 flex gap-2 flex-wrap"><span class="bg-white/10 px-2.5 py-1 rounded-full text-[11px]">🇬🇳 Guinée</span><span class="bg-white/10 px-2.5 py-1 rounded-full text-[11px]">🇫🇷 France</span><span class="bg-white/10 px-2.5 py-1 rounded-full text-[11px]">🇺🇸 USA</span><span class="bg-white/10 px-2.5 py-1 rounded-full text-[11px]">🇨🇮 Côte d'Ivoire</span><span class="bg-white/10 px-2.5 py-1 rounded-full text-[11px]">🇨🇦 Canada</span><span class="bg-[#FFD700] text-black px-2.5 py-1 rounded-full text-[11px] font-black">🌍 + 120 PAYS</span></div>
 </section>
-
 <section class="px-3 md:px-6 mt-3">
 <input id="search" oninput="render();renderSpotify()" placeholder="🔍 Que veux-tu écouter ? Artiste, titre..." class="w-full rounded-full px-4 py-2.5 outline-none text-sm">
 <div class="filter-row mt-2.5 flex gap-2 flex-wrap">
@@ -296,7 +298,6 @@ input:focus{border-color:#FFD700!important;outline:none}
 </div>
 <h2 id="sectionTitle" class="text-[17px] md:text-2xl font-black mt-2.5">⚡ FLASH ÉVANGILE WORLD</h2>
 </section>
-
 <div class="px-1 md:px-4">
 <div class="spot-title">Titres tendance 🔥 <span onclick="showTab('TOP',null)">Tout afficher</span></div><div id="spotTrending" class="spot-row"></div>
 <div class="spot-title">Artistes populaires 🎤 <span>Tout afficher</span></div><div id="spotArtists" class="spot-row"></div>
@@ -306,20 +307,17 @@ input:focus{border-color:#FFD700!important;outline:none}
 <div class="spot-title">Worship & Adoration 🙏 <span onclick="showTab('WORSHIP NIGHT',null)">Tout afficher</span></div><div id="spotWorship" class="spot-row"></div>
 <div class="spot-title">Live Sessions 🔴 <span onclick="showTab('LIVE SESSION',null)">Tout afficher</span></div><div id="spotLive" class="spot-row"></div>
 </div>
-
 <section id="grid" class="px-4 md:px-6 mt-6 grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4"></section>
 <section class="px-4 md:px-6 mt-8 hidden md:block"><h2 class="text-2xl font-black">🌍 Top Mondial</h2><div id="top10" class="mt-4 space-y-2"></div></section>
 <section class="px-4 md:px-6 mt-8 hidden md:block"><h2 class="text-2xl font-black">🎤 Artistes du Royaume ✅</h2><div id="artists" class="mt-4 flex gap-3 overflow-x-auto pb-2"></div></section>
 <footer class="px-4 md:px-6 mt-8 pb-4 text-xs text-[#B3B3B3]"><div class="grid grid-cols-2 md:grid-cols-4 gap-4"><div><b class="text-white">GOSPEL WORLD</b><p class="mt-2">A propos</p><p>Presse</p></div><div><b class="text-white">Communautés</b><p class="mt-2">Artistes</p><p>Publicité</p></div><div><b class="text-white">Liens utiles</b><p class="mt-2">Aide</p><p>App mobile</p></div><div><b class="text-white">👑 ROYAUME DE DIEU</b><p class="mt-2">💛 629-757-411</p><p>© 2026 GOSPEL WORLD</p></div></div></footer>
 </main></div>
-
 <div class="player-bar fixed bottom-[68px] md:bottom-0 left-0 md:left-auto right-0 md:right-0 w-full md:w-full bg-black border-t border-white/10 p-3 z-50 md:rounded-none">
 <div class="flex items-center gap-3 max-w-[1500px] mx-auto">
 <div class="flex items-center gap-3 w-[35%] min-w-[130px]"><img id="cover" onclick="openFullPlayer()" src="https://picsum.photos/seed/gospel/100" class="w-11 h-11 md:w-14 md:h-14 rounded-lg cursor-pointer shrink-0"><div class="min-w-0"><h4 id="ptitle" class="font-bold truncate text-[13px] md:text-sm">Choisis un chant</h4><p id="partist" class="text-[11px] md:text-xs text-[#B3B3B3] truncate">GOSPEL WORLD</p><p id="playlistInfo" class="text-[10px] text-[#1DB954]"></p></div></div>
 <div class="flex-1 hidden md:block max-w-[600px] mx-auto"><div class="flex justify-center gap-4 items-center"><button onclick="toggleShuffle()" id="shuffleBtn" class="text-[#B3B3B3]"><i class="fa-solid fa-shuffle"></i></button><button onclick="prevSong()" class="text-[#B3B3B3] hover:text-white"><i class="fa-solid fa-backward-step"></i></button><button id="playBtn" class="w-9 h-9 bg-white text-black rounded-full"><i class="fa-solid fa-play"></i></button><button onclick="nextSong()" class="text-[#B3B3B3] hover:text-white"><i class="fa-solid fa-forward-step"></i></button><button onclick="toggleRepeat()" id="repeatBtn" class="text-[#B3B3B3]"><i class="fa-solid fa-repeat"></i></button></div><div class="flex items-center gap-2 mt-1"><span id="curTime" class="text-[11px] text-[#B3B3B3]">0:00</span><div class="flex-1 bg-white/20 h-1 rounded-full cursor-pointer" onclick="seek(event)"><div id="prog" class="h-1 bg-white rounded-full w-0"></div></div><span id="durTime" class="text-[11px] text-[#B3B3B3]">0:00</span></div></div>
 <div class="flex items-center gap-2 ml-auto"><button onclick="openQueue()" class="hidden md:block w-8 h-8 text-[#B3B3B3]"><i class="fa-solid fa-list"></i></button><button onclick="openFullPlayer()" class="hidden md:flex w-8 h-8 text-[#B3B3B3] items-center justify-center"><i class="fa-solid fa-expand"></i></button><button onclick="shareCurrent()" class="w-9 h-9 bg-white/10 rounded-full"><i class="fa-solid fa-share-nodes"></i></button><button onclick="downloadCurrent()" class="w-9 h-9 bg-[#1DB954] rounded-full"><i class="fa-solid fa-download"></i></button><button id="playBtnM" class="md:hidden w-11 h-11 bg-white text-black rounded-full shrink-0"><i class="fa-solid fa-play"></i></button></div>
 </div><div class="md:hidden mt-2"><div class="w-full bg-white/20 h-1 rounded-full"><div id="progM" class="h-1 bg-white rounded-full w-0"></div></div></div><audio id="audio" class="hidden"></audio></div>
-
 <div class="bottom-nav md:hidden fixed bottom-0 left-0 right-0 bg-black border-t border-white/10 z-[60] flex justify-around py-2.5 pb-3">
 <button onclick="goHome()" class="flex flex-col items-center text-[11px] font-bold gap-0.5"><span class="text-lg">🏠</span>Accueil</button>
 <button onclick="document.getElementById('search').focus();window.scrollTo({top:650,behavior:'smooth'})" class="flex flex-col items-center text-[11px] gap-0.5"><span class="text-lg">🔍</span>Rechercher</button>
@@ -327,7 +325,6 @@ input:focus{border-color:#FFD700!important;outline:none}
 <button onclick="showTab('TOP',null)" class="flex flex-col items-center text-[11px] gap-0.5"><span class="text-lg">🏆</span>Top</button>
 <button onclick="toggleMobileMenu()" class="flex flex-col items-center text-[11px] gap-0.5"><span class="text-lg">☰</span>Menu</button>
 </div>
-
 <div id="fullPlayer" class="hidden fixed inset-0 z-[200] flex-col items-center justify-center p-4 text-center overflow-hidden overflow-y-auto">
 <div id="fullBg" class="dim-bg"></div><div class="absolute inset-0 bg-gradient-to-b from-purple-900/80 via-black/70 to-black/95"></div>
 <button onclick="closeFullPlayer()" class="absolute top-4 right-4 z-20 w-11 h-11 bg-white text-black rounded-full text-lg font-black">✕</button>
@@ -340,14 +337,12 @@ input:focus{border-color:#FFD700!important;outline:none}
 <div class="flex items-center gap-4 mt-5 relative z-10"><button onclick="prevSong()" class="w-12 h-12 bg-white/10 rounded-full text-xl"><i class="fa-solid fa-backward"></i></button><button onclick="togglePlay()" id="fullPlayBtn" class="w-[76px] h-[76px] bg-[#FFD700] text-black rounded-full text-3xl glow beat"><i class="fa-solid fa-play"></i></button><button onclick="nextSong()" class="w-12 h-12 bg-white/10 rounded-full text-xl"><i class="fa-solid fa-forward"></i></button></div>
 <div class="flex gap-2 mt-5 flex-wrap justify-center relative z-10 pb-8"><button onclick="openLyrics()" class="bg-white/10 px-4 py-2 rounded-full text-sm font-bold">📖 Paroles</button><button onclick="openArtistFromPlayer()" class="bg-white text-black px-4 py-2 rounded-full text-sm font-bold">🎤 Voir l'artiste</button><button onclick="donateCurrentArtist()" class="money-btn px-4 py-2 rounded-full text-sm font-bold">🙏 Soutenir l'artiste</button><button onclick="openDonateGW()" class="money-gw px-4 py-2 rounded-full text-sm font-bold">💛 Soutenir GW - 629-757-411</button></div>
 </div>
-
 <div id="donateModal" class="hidden fixed inset-0 bg-black/90 z-[220] flex items-center justify-center p-4"><div class="bg-[#181818] rounded-[20px] p-5 max-w-sm w-full text-center border border-[#FFD700]/30"><div class="flex justify-between"><h3 id="donateTitle" class="font-black text-lg">🙏 Soutenir</h3><button onclick="document.getElementById('donateModal').classList.add('hidden')" class="w-8 h-8 bg-white text-black rounded-full font-black">✕</button></div><p id="donateDesc" class="text-sm text-[#B3B3B3] mt-2"></p><p id="donateNumber" class="text-xl font-black text-[#FFD700] mt-3"></p><div class="grid grid-cols-3 gap-2 mt-4"><button onclick="doDonate(5000)" class="bg-white/10 py-3 rounded-xl font-bold">5.000 GNF</button><button onclick="doDonate(10000)" class="bg-[#FFD700] text-black py-3 rounded-xl font-bold">10.000 GNF</button><button onclick="doDonate(20000)" class="bg-white/10 py-3 rounded-xl font-bold">20.000 GNF</button></div><p class="text-xs text-[#B3B3B3] mt-3">Don DIRECT, sans intermediaire.<br><span class="text-[#FFD700]">🎁 Bonus Ciel: Dieu te benisse!</span></p></div></div>
 <div id="lyricsModal" class="hidden fixed inset-0 bg-black/90 z-[210] flex items-center justify-center p-4"><div class="bg-[#181818] rounded-[20px] p-5 max-w-md w-full text-center"><div class="flex justify-between"><h3 class="font-black">📖 Paroles</h3><button onclick="document.getElementById('lyricsModal').classList.add('hidden')" class="w-8 h-8 bg-white text-black rounded-full font-black">✕</button></div><p id="lyricsText" class="mt-4 text-sm leading-relaxed text-[#B3B3B3]"></p></div></div>
 <div id="queueModal" class="hidden fixed inset-0 bg-black/90 z-[210] flex items-center justify-center p-4"><div class="bg-[#181818] rounded-[20px] p-5 max-w-md w-full"><div class="flex justify-between"><h3 class="font-black">📋 File d'attente</h3><button onclick="document.getElementById('queueModal').classList.add('hidden')" class="w-8 h-8 bg-white text-black rounded-full font-black">✕</button></div><div id="queueList" class="mt-3 space-y-2 max-h-[300px] overflow-y-auto"></div></div></div>
 <div id="shareModal" class="hidden fixed inset-0 bg-black/90 z-[120] flex items-center justify-center p-4"><div class="bg-[#181818] rounded-[20px] p-5 max-w-sm w-full text-center"><div class="flex justify-between"><h3 class="font-black">Partager 🌍</h3><button onclick="document.getElementById('shareModal').classList.add('hidden')" class="w-8 h-8 bg-white text-black rounded-full font-black">✕</button></div><p id="shareTitle" class="text-sm text-[#B3B3B3] mb-4"></p><div class="grid grid-cols-3 gap-3"><button onclick="shareTo('whatsapp')" class="bg-[#25D366] py-3 rounded-2xl font-bold text-sm">WhatsApp</button><button onclick="shareTo('facebook')" class="bg-[#1877F2] py-3 rounded-2xl font-bold text-sm">Facebook</button><button onclick="shareTo('telegram')" class="bg-[#0088cc] py-3 rounded-2xl font-bold text-sm">Telegram</button><button onclick="shareTo('x')" class="bg-black border border-white/20 py-3 rounded-2xl font-bold text-sm">X</button><button onclick="shareTo('tiktok')" class="bg-black border border-white/20 py-3 rounded-2xl font-bold text-sm">TikTok</button><button onclick="shareTo('copy')" class="bg-white/10 py-3 rounded-2xl font-bold text-sm">Copier</button></div></div></div>
 <div id="commentModal" class="hidden fixed inset-0 bg-black/90 z-[125] flex items-center justify-center p-4"><div class="bg-[#181818] rounded-[20px] p-5 max-w-md w-full"><div class="flex justify-between"><h3 class="font-black">💬 Commentaires</h3><button onclick="document.getElementById('commentModal').classList.add('hidden')" class="w-8 h-8 bg-white text-black rounded-full font-black">✕</button></div><p id="commentTitle" class="text-sm text-[#B3B3B3]"></p><div id="commentList" class="mt-3 space-y-2 max-h-[200px] overflow-y-auto"></div><div class="flex gap-2 mt-3"><input id="commentInput" placeholder="Dis Amen..." class="flex-1 rounded-full px-4 py-2"><button onclick="addComment()" class="bg-[#FFD700] text-black px-4 rounded-full font-bold">Envoyer</button></div></div></div>
 <div id="artistModal" class="hidden fixed inset-0 bg-black/90 z-[130] flex items-center justify-center p-4"><div class="bg-[#181818] rounded-[20px] p-5 max-w-md w-full text-center max-h-[90vh] overflow-y-auto"><div class="flex justify-end"><button onclick="document.getElementById('artistModal').classList.add('hidden')" class="w-8 h-8 bg-white text-black rounded-full font-black">✕</button></div><div id="artistContent"></div></div></div>
-
 <div id="modal" class="hidden fixed inset-0 bg-black/80 z-[100] flex items-start md:items-center justify-center p-2 md:p-4 overflow-y-auto"><div class="modal-box bg-[#181818] rounded-[18px] p-3 md:p-6 w-full max-w-2xl my-2 md:my-8 relative">
 <div class="sticky top-0 z-10 flex justify-between items-center bg-[#181818] pb-2 -mx-1 px-1"><h3 id="modalTitle" class="text-base md:text-2xl font-black">🎤 STUDIO - Publier</h3><button onclick="closeModal()" class="w-9 h-9 min-w-[36px] bg-white text-black rounded-full font-black text-lg leading-none shrink-0 shadow-lg">✕</button></div>
 <p class="text-[11px] md:text-sm text-[#FFD700] mb-2">👉 CHOISIS TON TYPE, PUIS BALANCE TES SONS!</p>
@@ -365,12 +360,11 @@ input:focus{border-color:#FFD700!important;outline:none}
 </div>
 <div id="typeInfo" class="bg-[#FFD700] text-black rounded-lg p-2 text-[11px] md:text-sm font-bold mb-2">🎵 SINGLE - 1 Son - 1 fichier MP3</div>
 <form id="upForm" class="space-y-2"><input id="artist" placeholder="2 - Nom artiste - Ex: Jonathan" required class="w-full rounded-lg px-3 py-2 text-sm"><input id="titre" placeholder="3 - Titre - Ex: Mon Chant" required class="w-full rounded-lg px-3 py-2 text-sm"><input id="artistOM" placeholder="4 - Ton Orange Money / Wave - Ex: 622123456" required class="w-full rounded-lg px-3 py-2 text-sm border !border-yellow-500/50"><p class="text-[10px] md:text-xs text-[#FFD700]">💰 C'est sur ce numero que les fans vont t'envoyer les dons. 100% pour toi.</p><div id="collectionFields" class="hidden space-y-2"><textarea id="desc" placeholder="Description de ton projet..." class="w-full rounded-lg px-3 py-2 text-sm"></textarea></div><div class="border-2 border-dashed border-[#FFD700]/50 rounded-lg p-2.5 text-center"><label class="text-[11px] md:text-sm font-bold">5 - COVER (photo) 📸</label><input id="coverFile" type="file" accept="image/*" class="w-full mt-1 text-xs"></div><div class="border-2 border-dashed border-[#1DB954] rounded-lg p-2.5 text-center"><label class="text-[11px] md:text-sm font-bold">6 - FICHIERS AUDIO MP3 🎵</label><input id="files" type="file" accept=".mp3,audio/*" multiple required class="w-full mt-1 text-xs"><p id="fileInfo" class="text-[10px] text-[#FFD700] mt-1">Pour SINGLE: choisis 1 seul MP3.</p><p id="fileCount" class="text-[10px] font-black mt-1 text-white"></p></div><button class="w-full bg-[#FFD700] text-black font-black py-2.5 rounded-xl text-sm md:text-lg">🚀 PUBLIER</button><p id="status" class="text-center text-xs"></p><button type="button" onclick="closeModal()" class="w-full bg-white/10 py-2 rounded-full text-xs font-bold">❌ ANNULER / SORTIR</button></form></div></div>
-
 <script>
-// V26 - INSTALLATION VRAIE APP
+// V27 - INSTALLATION DIRECTE SANS CHROME
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').then(() => {
+    navigator.serviceWorker.register('/sw.js', {scope: '/'}).then(() => {
       console.log('GOSPEL WORLD installee - Service Worker OK');
     }).catch(() => {});
   });
@@ -503,23 +497,25 @@ load();
     """
 @app.route("/icon-192.png")
 def icon192():
-    if not HAS_PIL:
-        return "PIL manquant", 500
-    return send_file(make_gospel_icon(192), mimetype="image/png")
+    resp = send_file(make_gospel_icon(192), mimetype="image/png")
+    resp.headers["Cache-Control"] = "public, max-age=86400"
+    return resp
 @app.route("/icon-512.png")
 def icon512():
-    if not HAS_PIL:
-        return "PIL manquant", 500
-    return send_file(make_gospel_icon(512), mimetype="image/png")
+    resp = send_file(make_gospel_icon(512), mimetype="image/png")
+    resp.headers["Cache-Control"] = "public, max-age=86400"
+    return resp
 @app.route("/manifest.json")
 def manifest():
-    return jsonify({
+    resp = jsonify({
+        "id": "/",
         "name": "GOSPEL WORLD - ROYAUME DE DIEU",
         "short_name": "GOSPEL WORLD",
-        "description": "FLASH EVANGILE WORLD - ROYAUME DE DIEU",
+        "description": "FLASH EVANGILE WORLD - ROYAUME DE DIEU - KINGDOM OF GOD",
         "start_url": "/?source=pwa",
         "scope": "/",
         "display": "standalone",
+        "display_override": ["window-controls-overlay", "standalone"],
         "orientation": "portrait",
         "background_color": "#0A0A12",
         "theme_color": "#FFD700",
@@ -529,10 +525,12 @@ def manifest():
             {"src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
         ]
     })
+    resp.headers["Cache-Control"] = "no-cache"
+    return resp
 @app.route("/sw.js")
 def sw():
     js = """
-const CACHE = 'gospel-world-v26';
+const CACHE = 'gospel-world-v27';
 self.addEventListener('install', e => { self.skipWaiting(); });
 self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
 self.addEventListener('fetch', e => {
