@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, send_file
-import json, os, uuid, random, urllib.request, datetime, base64
+import json, os, uuid, urllib.request, datetime, zlib, struct
 from io import BytesIO
 import cloudinary
 import cloudinary.uploader
@@ -7,35 +7,37 @@ from dotenv import load_dotenv
 load_dotenv()
 app = Flask(__name__)
 
-# ===== ICONE G DOREE - V27 - MARCHE MEME SANS PIL =====
-try:
-    from PIL import Image, ImageDraw, ImageFont
-    HAS_PIL = True
-except:
-    HAS_PIL = False
-
-# Petit PNG de secours si PIL n'est pas la - 1x1 transparent, Chrome accepte
-FALLBACK_PNG_B64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
-
-def make_gospel_icon(size):
-    if not HAS_PIL:
-        buf = BytesIO(base64.b64decode(FALLBACK_PNG_B64))
-        buf.seek(0)
-        return buf
-    img = Image.new("RGB", (size, size), (10, 10, 18))
-    d = ImageDraw.Draw(img)
-    d.ellipse([size*0.05, size*0.05, size*0.95, size*0.95], fill=(255, 215, 0))
-    d.ellipse([size*0.12, size*0.12, size*0.88, size*0.88], fill=(10, 10, 18))
-    try:
-        font = ImageFont.truetype("DejaVuSans-Bold.ttf", int(size*0.55))
-    except:
-        font = ImageFont.load_default()
-    txt = "G"
-    bbox = d.textbbox((0,0), txt, font=font)
-    tw = bbox[2]-bbox[0]; th = bbox[3]-bbox[1]
-    d.text(((size-tw)/2 - bbox[0], (size-th)/2 - bbox[1] - size*0.03), txt, fill=(255, 215, 0), font=font)
-    buf = BytesIO()
-    img.save(buf, format="PNG")
+# ===== V28 - ICONE SANS PILLOW - VRAIE TAILLE 192 / 512 - CHROME ACCEPTE TOUJOURS =====
+def make_png(size):
+    # Cree un vrai PNG de la bonne taille, fond noir + carre dore au centre
+    # Pas besoin de Pillow, ca marche toujours sur Render!
+    def chunk(typ, data):
+        c = struct.pack(">I", len(data)) + typ + data
+        c += struct.pack(">I", zlib.crc32(typ + data) & 0xffffffff)
+        return c
+    # Pixels: fond noir (10,10,18) avec un gros carre dore (255,215,0) au centre pour le G
+    raw = b""
+    for y in range(size):
+        raw += b"\x00"  # filtre None
+        for x in range(size):
+            # Cercle dore
+            cx, cy = size//2, size//2
+            dist = ((x-cx)**2 + (y-cy)**2) ** 0.5
+            if dist < size*0.42 and dist > size*0.28:
+                raw += bytes([255, 215, 0])  # Or
+            elif dist < size*0.28:
+                # Centre noir avec barre dore verticale pour faire un G
+                if x > cx - size*0.05 and x < cx + size*0.05:
+                    raw += bytes([255, 215, 0])
+                else:
+                    raw += bytes([10, 10, 18])
+            else:
+                raw += bytes([10, 10, 18])
+    png = b"\x89PNG\r\n\x1a\n"
+    png += chunk(b"IHDR", struct.pack(">IIBBBBB", size, size, 8, 2, 0, 0, 0))
+    png += chunk(b"IDAT", zlib.compress(raw))
+    png += chunk(b"IEND", b"")
+    buf = BytesIO(png)
     buf.seek(0)
     return buf
 
@@ -99,7 +101,7 @@ def home():
 <!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>GOSPEL WORLD - FLASH EVANGILE WORLD - ROYAUME DE DIEU</title>
-<link rel="manifest" href="/manifest.json">
+<link rel="manifest" href="/manifest.json?v=28">
 <link rel="apple-touch-icon" href="/icon-192.png">
 <link rel="icon" type="image/png" href="/icon-192.png">
 <meta name="theme-color" content="#FFD700">
@@ -361,11 +363,11 @@ input:focus{border-color:#FFD700!important;outline:none}
 <div id="typeInfo" class="bg-[#FFD700] text-black rounded-lg p-2 text-[11px] md:text-sm font-bold mb-2">🎵 SINGLE - 1 Son - 1 fichier MP3</div>
 <form id="upForm" class="space-y-2"><input id="artist" placeholder="2 - Nom artiste - Ex: Jonathan" required class="w-full rounded-lg px-3 py-2 text-sm"><input id="titre" placeholder="3 - Titre - Ex: Mon Chant" required class="w-full rounded-lg px-3 py-2 text-sm"><input id="artistOM" placeholder="4 - Ton Orange Money / Wave - Ex: 622123456" required class="w-full rounded-lg px-3 py-2 text-sm border !border-yellow-500/50"><p class="text-[10px] md:text-xs text-[#FFD700]">💰 C'est sur ce numero que les fans vont t'envoyer les dons. 100% pour toi.</p><div id="collectionFields" class="hidden space-y-2"><textarea id="desc" placeholder="Description de ton projet..." class="w-full rounded-lg px-3 py-2 text-sm"></textarea></div><div class="border-2 border-dashed border-[#FFD700]/50 rounded-lg p-2.5 text-center"><label class="text-[11px] md:text-sm font-bold">5 - COVER (photo) 📸</label><input id="coverFile" type="file" accept="image/*" class="w-full mt-1 text-xs"></div><div class="border-2 border-dashed border-[#1DB954] rounded-lg p-2.5 text-center"><label class="text-[11px] md:text-sm font-bold">6 - FICHIERS AUDIO MP3 🎵</label><input id="files" type="file" accept=".mp3,audio/*" multiple required class="w-full mt-1 text-xs"><p id="fileInfo" class="text-[10px] text-[#FFD700] mt-1">Pour SINGLE: choisis 1 seul MP3.</p><p id="fileCount" class="text-[10px] font-black mt-1 text-white"></p></div><button class="w-full bg-[#FFD700] text-black font-black py-2.5 rounded-xl text-sm md:text-lg">🚀 PUBLIER</button><p id="status" class="text-center text-xs"></p><button type="button" onclick="closeModal()" class="w-full bg-white/10 py-2 rounded-full text-xs font-bold">❌ ANNULER / SORTIR</button></form></div></div>
 <script>
-// V27 - INSTALLATION DIRECTE SANS CHROME
+// V28 - INSTALLATION DIRECTE SANS PILLOW
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js', {scope: '/'}).then(() => {
-      console.log('GOSPEL WORLD installee - Service Worker OK');
+    navigator.serviceWorker.register('/sw.js?v=28', {scope: '/'}).then(() => {
+      console.log('GOSPEL WORLD V28 - Service Worker OK');
     }).catch(() => {});
   });
 }
@@ -382,7 +384,7 @@ function installApp(){
       deferredPrompt = null;
     });
   } else {
-    alert("📥 Pour installer GOSPEL WORLD comme TikTok:\\n\\n1. Clique sur les 3 points ⋮ en haut à droite de Chrome\\n2. Clique sur 'Installer l'application' ou 'Ajouter à l'écran d'accueil'\\n3. Clique sur 'Installer'\\n\\nL'icône GOSPEL WORLD va apparaître sur ton écran d'accueil!");
+    alert("📥 Pour installer GOSPEL WORLD comme TikTok:\\n\\n1. Clique sur les 3 points ⋮ en haut à droite de Chrome\\n2. Clique sur 'Installer l'application'\\n3. Clique sur 'Installer'\\n\\nL'icône GOSPEL WORLD va apparaître sur ton écran d'accueil!");
   }
 }
 function toggleKingdom(){ KINGDOM=!KINGDOM; document.body.style.background=KINGDOM?'linear-gradient(180deg,#1A0F00,#2D0A4A,#000)':'#08080F'; alert(KINGDOM?'👑 MODE ROYAUME ACTIVE - Bienvenue dans le Royaume de Dieu!':'Mode normal'); }
@@ -497,12 +499,12 @@ load();
     """
 @app.route("/icon-192.png")
 def icon192():
-    resp = send_file(make_gospel_icon(192), mimetype="image/png")
+    resp = send_file(make_png(192), mimetype="image/png")
     resp.headers["Cache-Control"] = "public, max-age=86400"
     return resp
 @app.route("/icon-512.png")
 def icon512():
-    resp = send_file(make_gospel_icon(512), mimetype="image/png")
+    resp = send_file(make_png(512), mimetype="image/png")
     resp.headers["Cache-Control"] = "public, max-age=86400"
     return resp
 @app.route("/manifest.json")
@@ -515,7 +517,6 @@ def manifest():
         "start_url": "/?source=pwa",
         "scope": "/",
         "display": "standalone",
-        "display_override": ["window-controls-overlay", "standalone"],
         "orientation": "portrait",
         "background_color": "#0A0A12",
         "theme_color": "#FFD700",
@@ -526,15 +527,20 @@ def manifest():
         ]
     })
     resp.headers["Cache-Control"] = "no-cache"
+    resp.headers["Content-Type"] = "application/manifest+json"
     return resp
 @app.route("/sw.js")
 def sw():
     js = """
-const CACHE = 'gospel-world-v27';
+const CACHE = 'gospel-world-v28';
 self.addEventListener('install', e => { self.skipWaiting(); });
 self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
+  if (e.request.url.includes('/manifest.json') || e.request.url.includes('/icon-')) {
+    e.respondWith(fetch(e.request));
+    return;
+  }
   e.respondWith(
     fetch(e.request).then(res => {
       const copy = res.clone();
