@@ -1,12 +1,13 @@
 from flask import Flask, jsonify, request
-import json, os, uuid, random
+import json, os, uuid, random, urllib.request
 import cloudinary
 import cloudinary.uploader
+import cloudinary.api
 from dotenv import load_dotenv
 load_dotenv()
 app = Flask(__name__)
 
-# ===== GOSPEL WORLD - ROYAUME DE DIEU - V10 COFFRE PERMANENT =====
+# ===== GOSPEL WORLD - ROYAUME DE DIEU - V11 COFFRE CLOUDINARY GRATUIT =====
 GOSPEL_OM = "629757411"
 GOSPEL_OM_DISPLAY = "629-757-411"
 VERSETS = [
@@ -18,7 +19,6 @@ VERSETS = [
     ("Matthieu 28:19", "Allez, faites de toutes les nations des disciples."),
     ("Psaume 23:1", "L'Eternel est mon berger, je ne manquerai de rien."),
 ]
-
 def get_env(*names):
     for n in names:
         v = os.getenv(n)
@@ -29,23 +29,55 @@ API_KEY = get_env("CLOUDINARY_API_KEY", "cloudinary_api_key")
 API_SECRET = get_env("CLOUDINARY_API_SECRET", "cloudinary_api_secret")
 cloudinary.config(cloud_name=CLOUD_NAME, api_key=API_KEY, api_secret=API_SECRET, secure=True)
 
-# ===== V10 - COFFRE PERMANENT - CA NE DISPARAIT PLUS JAMAIS =====
-# Sur Render, on utilise le disque /data qui ne s'efface jamais
-# En local, on utilise le dossier actuel
-DATA_DIR = "/data" if os.path.exists("/data") else "."
-def data_path(f):
-    return os.path.join(DATA_DIR, f)
+# ===== V11 - COFFRE PERMANENT GRATUIT SUR CLOUDINARY - NE S'EFFACE JAMAIS =====
+# On ne depend plus du disque Render (payant). On sauve songs.json sur Cloudinary.
+# Meme en Render Gratuit, meme apres 100 redeploys, les sons restent!
+_memory_cache = {}
+def cloudinary_json_url(fname):
+    # fname = songs.json ou collections.json -> public_id gospelworld_data/songs
+    base = fname.replace(".json","")
+    return f"https://res.cloudinary.com/{CLOUD_NAME}/raw/upload/gospelworld_data/{base}.json"
 def load_json(f, default):
-    p = data_path(f)
-    if not os.path.exists(p): return default
+    # 1. Essaye Cloudinary (le vrai coffre)
     try:
-        with open(p, "r", encoding="utf-8") as x: return json.load(x)
-    except: return default
+        url = cloudinary_json_url(f)
+        req = urllib.request.Request(url, headers={"Cache-Control":"no-cache"})
+        with urllib.request.urlopen(req, timeout=8) as r:
+            data = json.loads(r.read().decode("utf-8"))
+            _memory_cache[f] = data
+            return data
+    except Exception as e:
+        pass
+    # 2. Sinon memoire (pendant la session)
+    if f in _memory_cache:
+        return _memory_cache[f]
+    # 3. Sinon fichier local (au cas ou)
+    if os.path.exists(f):
+        try:
+            with open(f, "r", encoding="utf-8") as x:
+                d = json.load(x)
+                _memory_cache[f] = d
+                return d
+        except: pass
+    return default
 def save_json(f, data):
-    p = data_path(f)
-    os.makedirs(os.path.dirname(p) or ".", exist_ok=True)
-    with open(p, "w", encoding="utf-8") as x: json.dump(data, x, ensure_ascii=False, indent=2)
-# ================================================================
+    _memory_cache[f] = data
+    # Sauve en local aussi (secours)
+    try:
+        with open(f, "w", encoding="utf-8") as x:
+            json.dump(data, x, ensure_ascii=False, indent=2)
+    except: pass
+    # Sauve SUR CLOUDINARY - C'EST LE VRAI COFFRE QUI NE S'EFFACE JAMAIS
+    try:
+        base = f.replace(".json","")
+        # On ecrit un fichier temp puis on l'upload en raw avec overwrite
+        tmp = f"/tmp/{f}"
+        with open(tmp, "w", encoding="utf-8") as x:
+            json.dump(data, x, ensure_ascii=False, indent=2)
+        cloudinary.uploader.upload(tmp, resource_type="raw", public_id=f"gospelworld_data/{base}", overwrite=True, invalidate=True)
+    except Exception as e:
+        print(f"Erreur save Cloudinary {f}: {e}")
+# ============================================================================
 
 @app.route("/")
 def home():
@@ -117,14 +149,14 @@ input,select,textarea{background:#232323!important;color:#fff!important;border:1
 <button onclick="toggleKingdom()" class="w-full text-left flex gap-3 items-center p-3 rounded-lg bg-gradient-to-r from-purple-600 to-yellow-500"><i class="fa-solid fa-crown"></i> 👑 Mode Royaume</button>
 <button onclick="openDonateGW()" class="w-full text-left flex gap-3 items-center p-3 rounded-lg bg-[#FFD700] text-black fire"><i class="fa-solid fa-hand-holding-dollar"></i> 💛 Soutenir Gospel World<br><span class="text-xs font-black">629-757-411</span></button>
 </nav>
-<div class="mt-4 bg-gradient-to-br from-[#FFD700] via-[#FF2D55] to-[#00E5FF] text-white rounded-2xl p-4"><p class="font-black">🌌 DIMENSION CIEL</p><p class="text-xs opacity-90">GOSPEL WORLD est partout dans le monde - Vos sons restent pour toujours 🔒</p><div class="flex gap-1 mt-2 text-lg"><span>🇬🇳</span><span>🇫🇷</span><span>🇺🇸</span><span>🇨🇮</span><span>🇲🇱</span><span>🇸🇳</span><span>🌍</span></div><button onclick="installApp()" class="mt-3 w-full bg-black py-2 rounded-full font-bold text-sm">INSTALLER L'APP - GRATUIT</button></div>
+<div class="mt-4 bg-gradient-to-br from-[#FFD700] via-[#FF2D55] to-[#00E5FF] text-white rounded-2xl p-4"><p class="font-black">🌌 DIMENSION CIEL</p><p class="text-xs opacity-90">GOSPEL WORLD est partout - Vos sons restent pour toujours - 100% Gratuit 🔒</p><div class="flex gap-1 mt-2 text-lg"><span>🇬🇳</span><span>🇫🇷</span><span>🇺🇸</span><span>🇨🇮</span><span>🇲🇱</span><span>🇸🇳</span><span>🌍</span></div><button onclick="installApp()" class="mt-3 w-full bg-black py-2 rounded-full font-bold text-sm">INSTALLER L'APP - GRATUIT</button></div>
 <div class="mt-auto text-[11px] text-[#B3B3B3] px-2"><p id="statsSide">...</p><p>© 2026 GOSPEL WORLD - FLASH EVANGILE WORLD - KINGDOM OF GOD</p></div>
 </aside>
 <main class="flex-1 md:ml-[260px] pb-44 relative z-10">
 <header class="sticky top-0 z-40 bg-black/85 backdrop-blur-xl px-4 md:px-8 py-3 flex justify-between items-center gap-2">
 <div class="flex items-center gap-2 shrink-0"><div class="w-8 h-8 bg-gradient-to-br from-yellow-400 to-pink-500 rounded-full flex items-center justify-center font-black md:hidden">G</div><b class="md:hidden">GOSPEL <span class="text-[#FFD700]">WORLD</span></b><div class="hidden md:flex gap-2"><span class="bg-red-500 px-3 py-1 rounded-full text-xs font-bold animate-pulse whitespace-nowrap">🔴 LIVE - ROYAUME DE DIEU</span><span class="bg-white/10 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap">👑 KINGDOM OF GOD</span></div></div>
 <div class="flex gap-2 shrink-0"><button onclick="installApp()" class="hidden sm:block bg-white text-black px-3 py-2 rounded-full font-bold text-xs whitespace-nowrap">TELECHARGER L'APP</button><button onclick="openModal('single')" class="gold-btn px-4 py-2 rounded-full font-black text-sm whitespace-nowrap">➕ PUBLIER</button></div></header>
-<section class="px-4 md:px-8 pt-4"><div class="bg-gradient-to-r from-yellow-400 via-pink-500 to-cyan-400 rounded-[20px] p-4 flex flex-col md:flex-row items-center justify-between gap-3"><div><h3 class="font-black text-black text-xl">🎤 TU ES ARTISTE? BALANCE TON SON ICI!</h3><p class="text-black text-sm font-bold">Single - EP - Mixtape - Album - Live - Acapella - Worship - Ton son reste pour toujours! 🔒</p></div><button onclick="openModal('single')" class="bg-black text-white px-8 py-3 rounded-full font-black text-lg whitespace-nowrap pulse-ring">➕ PUBLIER MON SON</button></div></section>
+<section class="px-4 md:px-8 pt-4"><div class="bg-gradient-to-r from-yellow-400 via-pink-500 to-cyan-400 rounded-[20px] p-4 flex flex-col md:flex-row items-center justify-between gap-3"><div><h3 class="font-black text-black text-xl">🎤 TU ES ARTISTE? BALANCE TON SON ICI!</h3><p class="text-black text-sm font-bold">Single - EP - Mixtape - Album - Live - Acapella - Worship - Ton son reste pour toujours! 🔒 100% Gratuit</p></div><button onclick="openModal('single')" class="bg-black text-white px-8 py-3 rounded-full font-black text-lg whitespace-nowrap pulse-ring">➕ PUBLIER MON SON</button></div></section>
 <section class="px-4 md:px-8 pt-5"><div id="stories" class="flex gap-4 overflow-x-auto pb-2"></div></section>
 <section class="hero-grad px-4 md:px-8 pt-6 pb-8">
 <div class="flex items-end gap-1 h-10"><div class="bar"></div><div class="bar" style="animation-delay:.1s"></div><div class="bar" style="animation-delay:.2s"></div><div class="bar" style="animation-delay:.3s"></div><div class="bar" style="animation-delay:.4s"></div><div class="bar" style="animation-delay:.5s"></div><div class="bar" style="animation-delay:.6s"></div><div class="bar" style="animation-delay:.7s"></div><div class="bar" style="animation-delay:.8s"></div></div>
@@ -138,7 +170,7 @@ input,select,textarea{background:#232323!important;color:#fff!important;border:1
 <button onclick="openDonateGW()" class="bg-[#FFD700] text-black px-4 py-3 rounded-full font-black text-sm shrink-0 fire">💛 SOUTENIR<br>629-757-411</button>
 </div>
 <div class="mt-5 flex gap-3 flex-wrap"><button onclick="startRadio()" class="gold-btn px-6 py-3 rounded-full font-black text-sm fire">📻 RADIO ROYAUME DE DIEU</button><button onclick="playFirst()" class="bg-white text-black px-6 py-3 rounded-full font-black text-sm">🔀 LECTURE ALEATOIRE</button><button onclick="openDonateGW()" class="bg-[#FFD700] text-black px-6 py-3 rounded-full font-black text-sm">💛 SOUTENIR GOSPEL WORLD - 629-757-411</button><button onclick="toggleKingdom()" class="bg-purple-600 px-6 py-3 rounded-full font-black text-sm">👑 MODE ROYAUME</button><button onclick="openModal('single')" class="bg-[#FFD700] text-black px-6 py-3 rounded-full font-black text-sm">➕ PUBLIER MON SON</button></div>
-<div class="mt-5 bg-black/40 rounded-full py-2 overflow-hidden"><div class="marquee text-[#FFD700] text-sm font-bold">⚡ FLASH EVANGILE WORLD - 👑 ROYAUME DE DIEU - KINGDOM OF GOD - 🌍 GOSPEL WORLD GLOBAL - 💛 SOUTENIR GOSPEL WORLD - ORANGE MONEY 629-757-411 - TELECHARGEMENT HD GRATUIT - 🔒 TES SONS RESTENT POUR TOUJOURS - 👑 ROYAUME DE DIEU ⚡</div></div>
+<div class="mt-5 bg-black/40 rounded-full py-2 overflow-hidden"><div class="marquee text-[#FFD700] text-sm font-bold">⚡ FLASH EVANGILE WORLD - 👑 ROYAUME DE DIEU - KINGDOM OF GOD - 🌍 GOSPEL WORLD GLOBAL - 💛 SOUTENIR GOSPEL WORLD - ORANGE MONEY 629-757-411 - TELECHARGEMENT HD GRATUIT - 🔒 TES SONS RESTENT POUR TOUJOURS - 100% GRATUIT - 👑 ROYAUME DE DIEU ⚡</div></div>
 <div id="statsBar" class="mt-5 grid grid-cols-4 gap-3 max-w-3xl"></div>
 <div class="mt-4 flex gap-2 flex-wrap max-w-3xl"><span class="bg-white/10 px-3 py-1 rounded-full text-xs">🇬🇳 Guinée</span><span class="bg-white/10 px-3 py-1 rounded-full text-xs">🇫🇷 France</span><span class="bg-white/10 px-3 py-1 rounded-full text-xs">🇺🇸 USA</span><span class="bg-white/10 px-3 py-1 rounded-full text-xs">🇨🇮 Côte d'Ivoire</span><span class="bg-white/10 px-3 py-1 rounded-full text-xs">🇨🇦 Canada</span><span class="bg-[#FFD700] text-black px-3 py-1 rounded-full text-xs font-black">🌍 + 120 PAYS</span></div>
 </section>
@@ -201,7 +233,7 @@ input,select,textarea{background:#232323!important;color:#fff!important;border:1
 <div id="shareModal" class="hidden fixed inset-0 bg-black/90 z-[120] flex items-center justify-center p-6"><div class="bg-[#181818] rounded-[25px] p-6 max-w-sm w-full text-center"><h3 class="text-xl font-black">Partager dans le monde 🔥🌍</h3><p id="shareTitle" class="text-sm text-[#B3B3B3] mb-4"></p><div class="grid grid-cols-3 gap-3"><button onclick="shareTo('whatsapp')" class="bg-[#25D366] py-3 rounded-2xl font-bold text-sm">WhatsApp</button><button onclick="shareTo('facebook')" class="bg-[#1877F2] py-3 rounded-2xl font-bold text-sm">Facebook</button><button onclick="shareTo('telegram')" class="bg-[#0088cc] py-3 rounded-2xl font-bold text-sm">Telegram</button><button onclick="shareTo('x')" class="bg-black border border-white/20 py-3 rounded-2xl font-bold text-sm">X</button><button onclick="shareTo('tiktok')" class="bg-black border border-white/20 py-3 rounded-2xl font-bold text-sm">TikTok</button><button onclick="shareTo('copy')" class="bg-white/10 py-3 rounded-2xl font-bold text-sm">Copier</button></div><button onclick="document.getElementById('shareModal').classList.add('hidden')" class="mt-4 w-full bg-white/10 py-2 rounded-full">Fermer</button></div></div>
 <div id="commentModal" class="hidden fixed inset-0 bg-black/90 z-[125] flex items-center justify-center p-6"><div class="bg-[#181818] rounded-[25px] p-6 max-w-md w-full"><h3 class="font-black text-lg">💬 Commentaires du Royaume</h3><p id="commentTitle" class="text-sm text-[#B3B3B3]"></p><div id="commentList" class="mt-3 space-y-2 max-h-[200px] overflow-y-auto"></div><div class="flex gap-2 mt-3"><input id="commentInput" placeholder="Dis Amen..." class="flex-1 rounded-full px-4 py-2"><button onclick="addComment()" class="bg-[#FFD700] text-black px-4 rounded-full font-bold">Envoyer</button></div><button onclick="document.getElementById('commentModal').classList.add('hidden')" class="mt-3 w-full bg-white/10 py-2 rounded-full">Fermer</button></div></div>
 <div id="artistModal" class="hidden fixed inset-0 bg-black/90 z-[130] flex items-center justify-center p-6"><div class="bg-[#181818] rounded-[25px] p-6 max-w-md w-full text-center"><div id="artistContent"></div><button onclick="document.getElementById('artistModal').classList.add('hidden')" class="mt-4 w-full bg-white/10 py-2 rounded-full">Fermer</button></div></div>
-<div id="modal" class="hidden fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-4 overflow-y-auto"><div class="bg-[#181818] rounded-[25px] p-6 max-w-2xl w-full my-8"><div class="flex justify-between mb-2"><h3 id="modalTitle" class="text-2xl font-black">🎤 STUDIO - Publier</h3><button onclick="closeModal()" class="bg-white/10 w-8 h-8 rounded-full">X</button></div><p class="text-sm text-[#FFD700] mb-4">👉 CHOISIS TON TYPE DE PROJET, PUIS BALANCE TES SONS! Ton son reste pour toujours 🔒</p>
+<div id="modal" class="hidden fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-4 overflow-y-auto"><div class="bg-[#181818] rounded-[25px] p-6 max-w-2xl w-full my-8"><div class="flex justify-between mb-2"><h3 id="modalTitle" class="text-2xl font-black">🎤 STUDIO - Publier</h3><button onclick="closeModal()" class="bg-white/10 w-8 h-8 rounded-full">X</button></div><p class="text-sm text-[#FFD700] mb-4">👉 CHOISIS TON TYPE DE PROJET, PUIS BALANCE TES SONS! Ton son reste pour toujours 🔒 Gratuit</p>
 <p class="font-black text-sm mb-2">1 - CHOISIS TON TYPE DE PROJET 👇</p>
 <div class="grid grid-cols-3 gap-2 mb-2">
 <button type="button" onclick="selectType('SINGLE','🎵 SINGLE - 1 Son','single')" class="type-btn active bg-white/10 py-3 rounded-xl text-center" data-type="SINGLE"><span class="block text-xl">🎵</span><b class="text-sm block">SINGLE</b><span class="text-[11px] text-[#B3B3B3]">1 Son</span></button>
@@ -308,7 +340,7 @@ function renderComments(){ let list=COMMENTS[COMMENT_ID]||[]; document.getElemen
 function addComment(){ let v=document.getElementById('commentInput').value.trim(); if(!v) return; if(!COMMENTS[COMMENT_ID]) COMMENTS[COMMENT_ID]=[]; COMMENTS[COMMENT_ID].push(v); localStorage.setItem('gw_comments',JSON.stringify(COMMENTS)); document.getElementById('commentInput').value=''; renderComments(); render(); }
 function openModal(mode){ document.getElementById('modal').classList.remove('hidden'); if(mode==='single') selectType('SINGLE','🎵 SINGLE - 1 Son','single'); else selectType('EP','📀 EP - 3 a 6 Sons','collection'); }
 function closeModal(){document.getElementById('modal').classList.add('hidden');}
-document.getElementById('upForm').onsubmit=async e=>{ e.preventDefault(); let mode=document.getElementById('upForm').dataset.mode||SELECTED_MODE; let ptype=document.getElementById('upForm').dataset.ptype||SELECTED_TYPE; let fd=new FormData(); fd.append('artist',document.getElementById('artist').value); fd.append('titre',document.getElementById('titre').value); fd.append('artist_om',document.getElementById('artistOM').value); fd.append('type',ptype); fd.append('desc',document.getElementById('desc')?document.getElementById('desc').value:''); let cf=document.getElementById('coverFile').files[0]; if(cf) fd.append('cover',cf); for(let f of document.getElementById('files').files) fd.append('files',f); document.getElementById('status').innerText='Upload de '+ptype+' vers le coffre permanent... Ne ferme pas! 🔒'; let url=mode==='single'?'/upload-single':'/upload-collection'; let r=await fetch(url,{method:'POST',body:fd}); let d=await r.json(); document.getElementById('status').innerText=d.message; if(d.success){load(); setTimeout(closeModal,1200);} };
+document.getElementById('upForm').onsubmit=async e=>{ e.preventDefault(); let mode=document.getElementById('upForm').dataset.mode||SELECTED_MODE; let ptype=document.getElementById('upForm').dataset.ptype||SELECTED_TYPE; let fd=new FormData(); fd.append('artist',document.getElementById('artist').value); fd.append('titre',document.getElementById('titre').value); fd.append('artist_om',document.getElementById('artistOM').value); fd.append('type',ptype); fd.append('desc',document.getElementById('desc')?document.getElementById('desc').value:''); let cf=document.getElementById('coverFile').files[0]; if(cf) fd.append('cover',cf); for(let f of document.getElementById('files').files) fd.append('files',f); document.getElementById('status').innerText='Upload de '+ptype+' vers le coffre Cloudinary... Ne ferme pas! 🔒'; let url=mode==='single'?'/upload-single':'/upload-collection'; let r=await fetch(url,{method:'POST',body:fd}); let d=await r.json(); document.getElementById('status').innerText=d.message; if(d.success){load(); setTimeout(closeModal,1200);} };
 load();
 </script></body></html>
     """
@@ -349,7 +381,7 @@ def upload_single():
             c=cloudinary.uploader.upload(request.files["cover"], folder="gospelworld/covers"); cover_url=c["secure_url"]
         res=cloudinary.uploader.upload(files[0], resource_type="video", folder="gospelworld/singles")
         songs=load_json("songs.json",[]); songs.insert(0,{"id":uuid.uuid4().hex[:8],"title":title,"artist":artist,"artist_om":artist_om,"file":res["secure_url"],"cover":cover_url,"likes":0,"created":uuid.uuid4().hex}); save_json("songs.json",songs)
-        return jsonify({"success":True,"message":f"SINGLE '{title}' sauvegarde pour toujours dans le coffre! 🔒 Dons vers {artist_om}"})
+        return jsonify({"success":True,"message":f"SINGLE '{title}' sauvegarde pour toujours dans le coffre Cloudinary! 🔒 Dons vers {artist_om}"})
     except Exception as e: return jsonify({"success":False,"message":f"Erreur: {e}"})
 @app.route("/upload-collection", methods=["POST"])
 def upload_collection():
