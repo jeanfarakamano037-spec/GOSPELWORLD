@@ -26,8 +26,6 @@ CLOUD_NAME = get_env("CLOUDINARY_CLOUD_NAME", "cloudinary_cloud_name")
 API_KEY = get_env("CLOUDINARY_API_KEY", "cloudinary_api_key")
 API_SECRET = get_env("CLOUDINARY_API_SECRET", "cloudinary_api_secret")
 cloudinary.config(cloud_name=CLOUD_NAME, api_key=API_KEY, api_secret=API_SECRET, secure=True)
-
-# ===== V11 - COFFRE CLOUDINARY GRATUIT - NE S'EFFACE JAMAIS =====
 _memory_cache = {}
 def cloudinary_json_url(fname):
     base = fname.replace(".json","")
@@ -58,7 +56,6 @@ def save_json(f, data):
         with open(tmp,"w",encoding="utf-8") as x: json.dump(data,x,ensure_ascii=False,indent=2)
         cloudinary.uploader.upload(tmp, resource_type="raw", public_id=f"gospelworld_data/{base}", overwrite=True, invalidate=True)
     except Exception as e: print(f"Erreur save {f}: {e}")
-# ================================================================
 
 @app.route("/")
 def home():
@@ -114,19 +111,68 @@ input,select,textarea{background:#232323!important;color:#fff!important;border:1
 .dim-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(40px) brightness(.5);transform:scale(1.3);opacity:.8}
 .beat{animation:beat .6s ease-in-out infinite}
 @keyframes beat{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
-/* V12 - MENU MOBILE + SCROLL FIX */
 #mobileMenu{transition:transform .3s ease}
 #mobileMenu.closed{transform:translateX(-100%)}
 #mobileMenu.open{transform:translateX(0)}
 .mob-nav-btn.active{color:#FFD700!important}
+/* ===== V13 - SPOTIFY MODE - UNIQUEMENT TELEPHONE (max 768px) - ORDI NE CHANGE PAS ===== */
+@media (max-width: 768px){
+  /* Tout devient petit comme Spotify */
+  body{font-size:13px}
+  /* Hero GOSPEL WORLD beaucoup plus petit */
+  .hero-grad{padding-top:10px!important;padding-bottom:12px!important}
+  .hero-grad h1{font-size:38px!important;line-height:.9!important;margin-top:6px!important}
+  .hero-grad p{font-size:13px!important}
+  .hero-grad .bar{height:18px!important}
+  /* Bandeau artiste reduit */
+  .hero-grad .bg-black\\/60{padding:8px!important}
+  /* Boutons hero petits */
+  .hero-grad button{padding:7px 12px!important;font-size:11px!important}
+  /* Stats petits */
+  #statsBar{gap:6px!important;margin-top:10px!important}
+  #statsBar div{padding:6px!important}
+  /* Recherche + filtres compacts */
+  #search{padding:9px 14px!important;font-size:13px!important}
+  .tab-btn{padding:6px 10px!important;font-size:11px!important}
+  /* Cartes Spotify : petites, 2 par ligne, image ronde carree compacte */
+  #grid{grid-template-columns:1fr 1fr!important;gap:8px!important;padding-left:10px!important;padding-right:10px!important;margin-top:10px!important}
+  .card{padding:8px!important;border-radius:14px!important}
+  .card h3{font-size:12px!important;margin-top:6px!important}
+  .card p{font-size:10px!important}
+  .card img{border-radius:10px!important}
+  .card button{padding:6px!important;font-size:11px!important}
+  .card .flex{gap:4px!important;margin-top:6px!important}
+  /* Cache les gros boutons dons dans les cartes sur tel pour faire propre comme Spotify - on garde juste Ecouter + Like */
+  .card .money-btn, .card .money-gw{display:none!important}
+  /* Stories plus petites */
+  #stories .story-ring{width:52px!important;height:52px!important}
+  /* Titres sections plus petits */
+  h2{font-size:17px!important}
+  /* Top Mondial compact */
+  #top10 div{padding:8px!important}
+  /* Artistes plus petits */
+  #artists img{width:88px!important;height:88px!important}
+  /* Bandeau PUBLIER en haut plus petit */
+  section:first-of-type div{padding:10px!important}
+  section:first-of-type h3{font-size:14px!important}
+  section:first-of-type p{font-size:11px!important}
+  section:first-of-type button{padding:8px 14px!important;font-size:12px!important}
+  /* Bouton flottant Publier plus petit */
+  .publish-float{bottom:158px!important;padding:9px 14px!important;font-size:12px!important}
+  /* Player bas compact */
+  .fixed.bottom-\\[58px\\]{padding:8px!important}
+  #ptitle{font-size:12px!important}
+  /* Barre nav bas plus fine */
+  .mob-nav-btn span:first-child{font-size:18px!important}
+}
 </style></head><body>
 <div id="stars"></div>
 
-<!-- MENU MOBILE QUI GLISSE - MEME BOUTONS QUE ORDI -->
 <div id="mobileMenu" class="closed fixed top-0 left-0 w-[280px] h-full bg-black z-[300] p-4 overflow-y-auto border-r border-[#FFD700]/30">
 <div class="flex justify-between items-center"><div class="flex items-center gap-2"><div class="w-10 h-10 bg-gradient-to-br from-yellow-400 to-pink-500 rounded-full flex items-center justify-center font-black text-xl">G</div><div><b>GOSPEL <span class="text-[#FFD700]">WORLD</span></b><p class="text-[10px] text-[#FFD700]">ROYAUME DE DIEU</p></div></div><button onclick="toggleMobileMenu()" class="w-9 h-9 bg-white/10 rounded-full text-lg">X</button></div>
 <button onclick="toggleMobileMenu();openModal('single')" class="mt-5 w-full bg-[#FFD700] text-black font-black py-3 rounded-xl">➕ PUBLIER UN SON 🎤</button>
 <button onclick="toggleMobileMenu();openModal('collection')" class="mt-2 w-full bg-white text-black font-bold py-2 rounded-xl text-sm">📀 PUBLIER EP / MIXTAPE / ALBUM</button>
+<button onclick="toggleMobileMenu();installApp()" class="mt-2 w-full bg-[#1DB954] text-white font-black py-3 rounded-xl text-sm">📥 TELECHARGER L'APP - GRATUIT</button>
 <nav class="mt-4 space-y-1 font-bold">
 <button onclick="toggleMobileMenu();goHome()" class="w-full text-left flex gap-3 items-center p-3 rounded-lg bg-[#232323]">🏠 Accueil</button>
 <button onclick="toggleMobileMenu();document.getElementById('search').focus();window.scrollTo({top:600,behavior:'smooth'})" class="w-full text-left flex gap-3 items-center p-3 rounded-lg hover:bg-[#232323] text-[#B3B3B3]">🔍 Rechercher</button>
@@ -144,7 +190,6 @@ input,select,textarea{background:#232323!important;color:#fff!important;border:1
 <button onclick="openModal('single')" class="publish-float pulse-ring bg-[#FFD700] text-black font-black px-5 py-3 rounded-full text-sm md:text-lg">➕ PUBLIER MON SON 🎤</button>
 
 <div class="flex relative z-10">
-<!-- MENU ORDI - MAINTENANT SCROLLABLE -->
 <aside class="sidebar hidden md:flex flex-col w-[260px] h-screen fixed left-0 top-0 p-4 z-50 overflow-y-auto">
 <div class="flex items-center gap-2 px-2"><div class="w-10 h-10 bg-gradient-to-br from-yellow-400 via-pink-500 to-cyan-400 rounded-full flex items-center justify-center font-black text-xl glow float">G</div><div><b class="text-lg leading-none">GOSPEL <span class="text-[#FFD700]">WORLD</span></b><p class="text-[10px] text-[#FFD700]">🌌 ROYAUME DE DIEU</p></div></div>
 <button onclick="openModal('single')" class="mt-5 w-full bg-[#FFD700] text-black font-black py-3 rounded-xl text-base shrink-0">➕ PUBLIER UN SON 🎤</button>
@@ -159,7 +204,7 @@ input,select,textarea{background:#232323!important;color:#fff!important;border:1
 <button onclick="openDonateGW()" class="w-full text-left flex gap-3 items-center p-3 rounded-lg bg-[#FFD700] text-black fire"><i class="fa-solid fa-hand-holding-dollar"></i> 💛 Soutenir Gospel World<br><span class="text-xs font-black">629-757-411</span></button>
 </nav>
 <div class="mt-4 bg-gradient-to-br from-[#FFD700] via-[#FF2D55] to-[#00E5FF] text-white rounded-2xl p-4 shrink-0"><p class="font-black">🌌 DIMENSION CIEL</p><p class="text-xs opacity-90">GOSPEL WORLD partout - Sons pour toujours 🔒</p><div class="flex gap-1 mt-2 text-lg"><span>🇬🇳</span><span>🇫🇷</span><span>🇺🇸</span><span>🇨🇮</span><span>🇲🇱</span><span>🇸🇳</span><span>🌍</span></div><button onclick="installApp()" class="mt-3 w-full bg-black py-2 rounded-full font-bold text-sm">INSTALLER L'APP - GRATUIT</button></div>
-<div class="mt-4 text-[11px] text-[#B3B3B3] px-2 pb-4"><p id="statsSide">...</p><p>© 2026 GOSPEL WORLD - FLASH EVANGILE WORLD - KINGDOM OF GOD</p><button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="mt-3 w-full bg-white/10 py-2 rounded-full font-bold">⬆️ REMONTER EN HAUT</button></div>
+<div class="mt-4 text-[11px] text-[#B3B3B3] px-2 pb-4"><p id="statsSide">...</p><p>© 2026 GOSPEL WORLD - FLASH EVANGILE WORLD - KINGDOM OF GOD</p></div>
 </aside>
 
 <main class="flex-1 md:ml-[260px] pb-[180px] relative z-10">
@@ -170,7 +215,10 @@ input,select,textarea{background:#232323!important;color:#fff!important;border:1
 <div class="hidden md:flex gap-2"><span class="bg-red-500 px-3 py-1 rounded-full text-xs font-bold animate-pulse whitespace-nowrap">🔴 LIVE - ROYAUME DE DIEU</span><span class="bg-white/10 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap">👑 KINGDOM OF GOD</span></div>
 <div class="md:hidden flex gap-1"><span class="bg-red-500 px-2 py-1 rounded-full text-[10px] font-bold animate-pulse">🔴 LIVE</span></div>
 </div>
-<div class="flex gap-2 shrink-0"><button onclick="installApp()" class="hidden sm:block bg-white text-black px-3 py-2 rounded-full font-bold text-xs whitespace-nowrap">TELECHARGER L'APP</button><button onclick="openModal('single')" class="gold-btn px-4 py-2 rounded-full font-black text-sm whitespace-nowrap">➕ PUBLIER</button></div></header>
+<div class="flex gap-2 shrink-0">
+<button onclick="installApp()" class="bg-[#1DB954] text-white px-3 py-2 rounded-full font-bold text-xs whitespace-nowrap">📥 TELECHARGER L'APP</button>
+<button onclick="openModal('single')" class="gold-btn px-4 py-2 rounded-full font-black text-sm whitespace-nowrap">➕ PUBLIER</button>
+</div></header>
 
 <section class="px-4 md:px-8 pt-4"><div class="bg-gradient-to-r from-yellow-400 via-pink-500 to-cyan-400 rounded-[20px] p-4 flex flex-col md:flex-row items-center justify-between gap-3"><div><h3 class="font-black text-black text-xl">🎤 TU ES ARTISTE? BALANCE TON SON ICI!</h3><p class="text-black text-sm font-bold">Single - EP - Mixtape - Album - Live - Acapella - Worship - Ton son reste pour toujours! 🔒 100% Gratuit</p></div><button onclick="openModal('single')" class="bg-black text-white px-8 py-3 rounded-full font-black text-lg whitespace-nowrap pulse-ring">➕ PUBLIER MON SON</button></div></section>
 <section class="px-4 md:px-8 pt-5"><div id="stories" class="flex gap-4 overflow-x-auto pb-2"></div></section>
@@ -208,12 +256,9 @@ input,select,textarea{background:#232323!important;color:#fff!important;border:1
 </section>
 <section id="grid" class="px-4 md:px-8 mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></section>
 <section class="px-4 md:px-8 mt-8"><h2 class="text-2xl font-black">🌍 Top Mondial - Les plus aimés dans le monde</h2><div id="top10" class="mt-4 space-y-2"></div></section>
-<section class="px-4 md:px-8 mt-8"><h2 class="text-2xl font-black">🎤 Artistes du Royaume ✅</h2><div id="artists" class="mt-4 flex gap-3 overflow-x-auto pb-2"></div>
-<div class="mt-8 text-center"><button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="bg-white/10 px-6 py-3 rounded-full font-bold">⬆️ REMONTER EN HAUT - VOIR LE DEBUT</button></div>
-</section>
+<section class="px-4 md:px-8 mt-8"><h2 class="text-2xl font-black">🎤 Artistes du Royaume ✅</h2><div id="artists" class="mt-4 flex gap-3 overflow-x-auto pb-2"></div></section>
 </main></div>
 
-<!-- BARRE DE LECTURE EN BAS -->
 <div class="fixed bottom-[58px] md:bottom-0 w-full bg-black/95 border-t border-[#FFD700]/20 p-3 z-50">
 <div class="flex items-center gap-3 max-w-[1400px] mx-auto">
 <img id="cover" onclick="openFullPlayer()" src="https://picsum.photos/seed/gospel/100" class="w-12 h-12 md:w-14 md:h-14 rounded-xl cursor-pointer shrink-0">
@@ -222,7 +267,6 @@ input,select,textarea{background:#232323!important;color:#fff!important;border:1
 <div class="flex items-center gap-2 ml-auto"><button onclick="openFullPlayer()" class="hidden md:flex w-10 h-10 bg-white/10 rounded-full items-center justify-center"><i class="fa-solid fa-expand"></i></button><button onclick="shareCurrent()" class="w-9 h-9 md:w-10 md:h-10 bg-white/10 rounded-full"><i class="fa-solid fa-share-nodes"></i></button><button onclick="downloadCurrent()" class="w-9 h-9 md:w-10 md:h-10 bg-[#1DB954] rounded-full"><i class="fa-solid fa-download"></i></button><button id="playBtnM" class="md:hidden w-11 h-11 bg-[#FFD700] text-black rounded-full shrink-0"><i class="fa-solid fa-play"></i></button></div>
 </div><div class="md:hidden mt-2"><div class="w-full bg-white/20 h-1 rounded-full"><div id="progM" class="h-1 bg-[#FFD700] rounded-full w-0"></div></div></div><audio id="audio" class="hidden"></audio></div>
 
-<!-- BARRE DE NAVIGATION MOBILE EN BAS - COMME TIKTOK / SPOTIFY -->
 <div class="md:hidden fixed bottom-0 w-full bg-black border-t border-white/10 z-[60] flex justify-around py-2 pb-3">
 <button onclick="goHome()" class="mob-nav-btn flex flex-col items-center text-xs font-bold"><span class="text-xl">🏠</span>Accueil</button>
 <button onclick="document.getElementById('search').focus();window.scrollTo({top:650,behavior:'smooth'})" class="mob-nav-btn flex flex-col items-center text-xs"><span class="text-xl">🔍</span>Rechercher</button>
@@ -281,11 +325,10 @@ input,select,textarea{background:#232323!important;color:#fff!important;border:1
 let ALL=[], CURRENT=[], CURRENT_INDEX=0, FILTER='all', LIKES=JSON.parse(localStorage.getItem('gw_likes')||'[]'), COMMENTS=JSON.parse(localStorage.getItem('gw_comments')||'{}'), deferredPrompt=null, SHUFFLE=false, REPEAT=false, RADIO=false, KINGDOM=false, DONATE_TARGET={type:'gw',name:'GOSPEL WORLD',number:''}, SELECTED_TYPE='SINGLE', SELECTED_MODE='single', CURRENT_COVER='';
 const audio=document.getElementById('audio'); const playBtn=document.getElementById('playBtn'); const playBtnM=document.getElementById('playBtnM');
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault(); deferredPrompt=e;});
-function installApp(){ if(deferredPrompt) deferredPrompt.prompt(); else alert("Android: Menu > Ajouter a l'ecran d'accueil\\niPhone: Partager > Ajouter"); }
+function installApp(){ if(deferredPrompt) deferredPrompt.prompt(); else alert("📥 Pour installer GOSPEL WORLD:\\n\\nAndroid Chrome: Menu ⋮ > Ajouter a l'ecran d'accueil\\niPhone Safari: Partager ⬆️ > Ajouter a l'ecran d'accueil"); }
 function toggleKingdom(){ KINGDOM=!KINGDOM; document.body.style.background=KINGDOM?'linear-gradient(180deg,#1A0F00,#2D0A4A,#000)':'#020108'; alert(KINGDOM?'👑 MODE ROYAUME ACTIVE - Bienvenue dans le Royaume de Dieu!':'Mode normal'); }
 function createStars(){ let c=document.getElementById('stars'); for(let i=0;i<50;i++){ let s=document.createElement('div'); s.className='star'; let sz=Math.random()*3+1; s.style.width=sz+'px'; s.style.height=sz+'px'; s.style.left=Math.random()*100+'vw'; s.style.animationDuration=(Math.random()*4+3)+'s'; s.style.animationDelay=Math.random()*4+'s'; s.style.opacity=Math.random(); c.appendChild(s); } }
 createStars();
-// V12 - MENU MOBILE
 function toggleMobileMenu(){ let m=document.getElementById('mobileMenu'); let o=document.getElementById('mobileOverlay'); if(m.classList.contains('closed')){ m.classList.remove('closed'); m.classList.add('open'); o.classList.remove('hidden'); } else { m.classList.add('closed'); m.classList.remove('open'); o.classList.add('hidden'); } }
 function selectType(type, label, mode){
   SELECTED_TYPE=type; SELECTED_MODE=mode;
@@ -335,8 +378,15 @@ function render(){
   let q=(document.getElementById('search').value||'').toLowerCase();
   let list=ALL.filter(x=>{ if(FILTER==='LIKED' && !LIKES.includes(x.id)) return false; if(FILTER==='TOP') return true; if(FILTER!=='all' && FILTER!=='LIKED' && x.type!==FILTER) return false; if(q && !(x.title.toLowerCase().includes(q)||x.artist.toLowerCase().includes(q))) return false; return true; });
   if(FILTER==='TOP') list=[...list].sort((a,b)=>(b.likes||0)-(a.likes||0)).slice(0,10);
+  let isMobile = window.innerWidth <= 768;
   document.getElementById('grid').innerHTML=list.map(item=>{
     let liked=LIKES.includes(item.id)?'❤️':'🤍'; let cmt=(COMMENTS[item.id]||[]).length;
+    // ===== SUR TELEPHONE : STYLE SPOTIFY - PETIT, PROPRE, 1 LIGNE =====
+    if(isMobile){
+      if(item.type==='SINGLE') return `<div class='card group rounded-[14px] p-2'><div class='relative'><img src='${item.cover}' class='w-full aspect-square object-cover rounded-lg'><button onclick="playSingle('${item.id}')" class='absolute bottom-2 right-2 w-9 h-9 bg-[#FFD700] text-black rounded-full shadow-lg'><i class='fa-solid fa-play text-xs'></i></button></div><h3 class='font-bold mt-2 truncate text-xs'>${item.title}</h3><p class='text-[10px] text-[#B3B3B3] truncate'>${item.artist} ✅</p><div class='flex gap-1 mt-2'><button onclick="playSingle('${item.id}')" class='flex-1 bg-[#FFD700] text-black font-bold py-1.5 rounded-full text-[11px]'>▶ ECOUTER</button><button onclick="toggleLike('${item.id}')" class='w-8 bg-white/10 rounded-full text-sm'>${liked}</button></div><div class='flex gap-1 mt-1'><button onclick="openShare('${item.id}')" class='flex-1 bg-white/10 py-1.5 rounded-full text-[10px]'>PARTAGER 🌍</button><button onclick="downloadItem('${item.id}')" class='flex-1 bg-[#1DB954] py-1.5 rounded-full text-[10px]'>⬇ HD</button></div><button onclick="openComments('${item.id}')" class='w-full bg-white/5 py-1 rounded-full text-[10px] mt-1'>💬 ${cmt} Amen</button></div>`;
+      else { let countTxt=item.songs?item.songs.length+' Sons':''; return `<div class='card rounded-[14px] p-2 border border-[#FFD700]/20'><div class='relative'><img src='${item.cover}' class='w-full aspect-square object-cover rounded-lg'><span class='absolute top-1 left-1 bg-[#FFD700] text-black text-[9px] font-black px-1.5 py-0.5 rounded-full'>${item.type} - ${countTxt}</span></div><h3 class='font-bold mt-2 truncate text-xs'>${item.title}</h3><p class='text-[10px] text-[#B3B3B3] truncate'>${item.artist} ✅</p><div class='flex gap-1 mt-2'><button onclick="playCollection('${item.id}')" class='flex-1 bg-[#FFD700] text-black font-bold py-1.5 rounded-full text-[11px]'>▶ TOUT (${countTxt})</button><button onclick="toggleLike('${item.id}')" class='w-8 bg-white/10 rounded-full text-sm'>${liked}</button></div><div class='flex gap-1 mt-1'><button onclick="openShare('${item.id}')" class='flex-1 bg-white/10 py-1.5 rounded-full text-[10px]'>PARTAGER 🌍</button><button onclick="downloadItem('${item.id}')" class='flex-1 bg-[#1DB954] py-1.5 rounded-full text-[10px]'>⬇ HD</button></div><button onclick="openComments('${item.id}')" class='w-full bg-white/5 py-1 rounded-full text-[10px] mt-1'>💬 ${cmt} Amen</button></div>`; }
+    }
+    // ===== SUR ORDI : ON NE CHANGE RIEN - COMME AVANT =====
     let shareBtn=`<button onclick="openShare('${item.id}')" class='flex-1 bg-white/10 py-2 rounded-full text-xs font-bold'>PARTAGER 🌍</button>`;
     let dlBtn=`<button onclick="downloadItem('${item.id}')" class='flex-1 bg-[#1DB954] py-2 rounded-full text-xs font-bold'>⬇ HD GRATUIT</button>`;
     let donateArtistBtn=`<button onclick="donateArtist('${item.id}')" class='w-full money-btn py-2 rounded-full text-xs font-bold mt-2'>🙏 SOUTENIR ${item.artist.toUpperCase()} - Orange Money</button>`;
