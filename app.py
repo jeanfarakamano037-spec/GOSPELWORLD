@@ -70,7 +70,6 @@ def home():
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-/* ===== BASE ===== */
 html,body{overflow-x:hidden;overflow-y:auto!important}
 body{background:#08080F!important;color:#fff!important;font-family:Inter,Helvetica,Arial,sans-serif;margin:0;-webkit-tap-highlight-color:transparent}
 ::-webkit-scrollbar{width:8px;height:6px}::-webkit-scrollbar-thumb{background:#3a3a3a;border-radius:99px}
@@ -93,7 +92,6 @@ input:focus{border-color:#FFD700!important;outline:none}
 @keyframes fall{to{transform:translateY(110vh) translateX(40px);opacity:0}}
 .fire{animation:fire 1s infinite alternate}@keyframes fire{from{transform:scale(1)}to{transform:scale(1.05)}}
 .float{animation:float 3s ease-in-out infinite}@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-.publish-float{position:fixed;bottom:165px;right:12px;z-index:120;box-shadow:0 10px 30px rgba(255,215,0,.7);animation:float 2s ease-in-out infinite}
 .pulse-ring{animation:pulseRing 1.5s infinite}@keyframes pulseRing{0%{box-shadow:0 0 0 0 rgba(255,215,0,.6)}70%{box-shadow:0 0 0 14px rgba(255,215,0,0)}100%{box-shadow:0 0 0 0 rgba(255,215,0,0)}}
 .type-btn{transition:.2s;border:2px solid transparent}.type-btn.active{border-color:#FFD700!important;background:#FFD700!important;color:#000!important;transform:scale(1.03)}
 .dim-stage{perspective:1200px;position:relative}
@@ -107,7 +105,6 @@ input:focus{border-color:#FFD700!important;outline:none}
 .beat{animation:beat .6s ease-in-out infinite}@keyframes beat{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
 #mobileMenu{transition:transform .3s ease}#mobileMenu.closed{transform:translateX(-100%)}#mobileMenu.open{transform:translateX(0)}
 .hero-grad{background:radial-gradient(ellipse at top,#2D0A4A 0%,#0A0A2E 35%,#08080F 70%,#000 100%)}
-/* ===== SPOTIFY CARDS ORDI ===== */
 .spot-card{background:#181818;border-radius:12px;padding:14px;cursor:pointer;transition:.3s;position:relative}
 .spot-card:hover{background:#282828}
 .spot-card img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px}
@@ -122,41 +119,38 @@ input:focus{border-color:#FFD700!important;outline:none}
 .spot-title span{font-size:13px;color:#B3B3B3;cursor:pointer}
 .filter-row{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:4px 0 8px 0}.filter-row::-webkit-scrollbar{display:none}.filter-row button{flex-shrink:0;white-space:nowrap}
 .hrow{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}.hrow::-webkit-scrollbar{display:none}.hrow>*{flex-shrink:0;white-space:nowrap}
-
-/* ===== V20 - TELEPHONE NORMALISE - COOL, MIEUX QUE SPOTIFY ===== */
+/* V23 - TELEPHONE NORMALISE - UN SEUL PUBLIER */
 @media (max-width: 768px){
   body{background:#0A0A12!important;font-size:14px}
-  /* App container centre, max 480px, comme une vraie app */
   main{max-width:480px;margin:0 auto!important;padding-left:0!important;padding-right:0!important}
-  /* Header cool glass */
-  header{padding:10px 14px!important;background:rgba(10,10,18,.9)!important;backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.06)}
-  /* Bandeau publier petit, arrondi, ombre cool */
+  header{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;gap:8px!important;scrollbar-width:none!important;padding:8px 10px!important;justify-content:flex-start!important;background:rgba(10,10,18,.95)!important;backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.06)}
+  header::-webkit-scrollbar{display:none}
+  header > div{flex-shrink:0!important}
+  header button{flex-shrink:0!important;white-space:nowrap!important}
+  .header-scroll{display:flex!important;gap:8px!important;overflow-x:auto!important;scrollbar-width:none!important}
+  .header-scroll::-webkit-scrollbar{display:none}
+  .header-scroll > *{flex-shrink:0!important}
   .top-banner{padding:10px 12px!important;border-radius:16px!important;box-shadow:0 8px 24px rgba(255,45,85,.25)}
   .top-banner h3{font-size:13px!important;line-height:1.2}
   .top-banner p{font-size:10.5px!important;margin-top:2px}
   .top-banner button{padding:8px 14px!important;font-size:11px!important;border-radius:9999px}
-  /* Hero normalise */
   .hero-grad{padding:12px 14px 10px 14px!important;border-radius:0 0 20px 20px}
   .hero-grad h1{font-size:32px!important;line-height:.95!important;letter-spacing:-.5px}
   .hero-grad .verse-box{padding:10px 12px!important;border-radius:14px!important;background:rgba(255,255,255,.06)!important;border:1px solid rgba(255,255,255,.08)!important}
-  .hero-grad .flash-box{padding:10px!important;border-radius:16px!important}
-  .hero-grad .flash-box h3{font-size:13px!important}
-  /* Boutons action - ligne qui glisse, pill cool */
+  .hero-grad .flash-box{padding:10px!important;border-radius:16px!important;flex-wrap:nowrap!important}
+  .hero-grad .flash-box button{flex-shrink:0!important;white-space:nowrap!important;font-size:10px!important;padding:8px 10px!important}
+  .hero-grad .flash-box h3{font-size:12px!important}
   .action-row{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;gap:8px!important;scrollbar-width:none;padding:2px 2px 6px 2px}
   .action-row::-webkit-scrollbar{display:none}
   .action-row button{flex-shrink:0!important;white-space:nowrap!important;padding:9px 14px!important;font-size:11.5px!important;border-radius:9999px!important;box-shadow:0 4px 14px rgba(0,0,0,.3)}
-  /* Stats - petites cartes cool */
   #statsBar{display:flex!important;overflow-x:auto!important;gap:8px!important;scrollbar-width:none}
   #statsBar::-webkit-scrollbar{display:none}
   #statsBar div{flex:0 0 84px!important;padding:10px 6px!important;border-radius:14px!important}
-  /* Drapeaux */
   .flags-row{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;gap:6px!important;scrollbar-width:none}
   .flags-row::-webkit-scrollbar{display:none}.flags-row span{flex-shrink:0!important}
-  /* Recherche + Filtres - pill, tout glisse */
   #search{border-radius:9999px!important;padding:11px 16px!important;font-size:13px!important;background:#1A1A22!important;border:none!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
   .filter-row{padding:8px 14px 4px 14px!important;gap:7px!important}
   .filter-row button{padding:8px 13px!important;font-size:11.5px!important;border-radius:9999px!important}
-  /* Lignes Spotify - MIEUX QUE SPOTIFY : cartes glass, coins doux */
   .spot-row{gap:11px!important;padding:0 14px 6px 14px!important}
   .spot-row .spot-card{flex:0 0 146px!important;padding:0!important;background:transparent!important}
   .spot-row .spot-card img{width:146px!important;height:146px!important;border-radius:16px!important;box-shadow:0 8px 20px rgba(0,0,0,.45)}
@@ -166,25 +160,18 @@ input:focus{border-color:#FFD700!important;outline:none}
   .spot-title{font-size:18.5px!important;padding:16px 14px 8px 14px!important;letter-spacing:-.3px}
   .spot-title span{font-size:12px!important}
   .spot-play{display:none}
-  /* Stories petites */
   #stories{padding:0 14px!important}
   #stories .story-ring{width:52px!important;height:52px!important}
-  /* Grille ordi cachee sur tel */
   #grid{display:none!important}
-  /* Player bas - glass, arrondi */
   .player-bar{margin:0 8px 8px 8px!important;border-radius:16px!important;background:rgba(20,20,28,.95)!important;border:1px solid rgba(255,255,255,.08)!important;box-shadow:0 8px 30px rgba(0,0,0,.6)}
   .player-bar img{border-radius:10px!important}
-  /* Nav bas - cool, flottante */
   .bottom-nav{margin:0 10px 10px 10px!important;border-radius:20px!important;background:rgba(18,18,26,.95)!important;border:1px solid rgba(255,255,255,.08)!important;box-shadow:0 10px 30px rgba(0,0,0,.6)}
-  /* MODAL PUBLIER - PETIT, CENTRE, AVEC X */
   #modal{align-items:flex-start!important;padding:10px!important}
   #modal .modal-box{max-height:88vh!important;overflow-y:auto!important;padding:14px!important;border-radius:20px!important;max-width:440px!important;box-shadow:0 20px 60px rgba(0,0,0,.7)}
   #modal .type-btn{padding:8px 4px!important;border-radius:12px!important}
   #modal input, #modal textarea{padding:10px 12px!important;font-size:13px!important;border-radius:12px!important}
   #modal h3{font-size:16px!important}
-  .publish-float{bottom:158px!important;padding:9px 14px!important;font-size:11px!important;right:12px!important;border-radius:9999px}
-  /* Cache player flottant quand modal ouvert */
-  body.modal-open .publish-float{display:none}
+  .publish-float{display:none!important}
 }
 @media (min-width: 769px){
   .main-content{margin-left:300px}
@@ -211,7 +198,6 @@ input:focus{border-color:#FFD700!important;outline:none}
 <p class="text-[11px] text-[#B3B3B3] mt-4">© 2026 GOSPEL WORLD - FLASH EVANGILE WORLD</p>
 </div>
 <div id="mobileOverlay" onclick="toggleMobileMenu()" class="hidden fixed inset-0 bg-black/70 z-[290]"></div>
-<button onclick="openModal('single')" class="publish-float pulse-ring bg-[#FFD700] text-black font-black px-5 py-3 rounded-full text-sm md:text-lg">➕ PUBLIER MON SON 🎤</button>
 
 <div class="flex relative z-10">
 <aside class="sidebar hidden md:flex flex-col w-[290px] fixed left-2 top-2 bottom-[90px] p-3 z-50 overflow-y-auto bg-[#121212] rounded-xl">
@@ -238,20 +224,24 @@ input:focus{border-color:#FFD700!important;outline:none}
 </aside>
 
 <main class="main-content flex-1 md:ml-[300px] md:mr-2 md:mt-2 md:mb-[90px] pb-[180px] md:pb-6 relative z-10 bg-[#121212] md:rounded-xl overflow-hidden">
-<header class="sticky top-0 z-40 bg-[#121212]/95 backdrop-blur-xl px-4 md:px-6 py-3 flex justify-between items-center gap-2">
-<div class="flex items-center gap-2">
-<button onclick="toggleMobileMenu()" class="md:hidden w-10 h-10 bg-white/10 rounded-full">☰</button>
+<header class="sticky top-0 z-40 bg-[#121212]/95 backdrop-blur-xl px-3 py-2.5 flex items-center gap-2">
+<div class="flex items-center gap-1.5 shrink-0">
+<button onclick="toggleMobileMenu()" class="md:hidden w-9 h-9 bg-white/10 rounded-full shrink-0">☰</button>
+<div class="md:hidden w-8 h-8 bg-white rounded-full flex items-center justify-center font-black text-black text-sm shrink-0">G</div>
+<div class="md:hidden leading-none shrink-0"><b class="text-[13px] block">GOSPEL</b><b class="text-[13px] block text-[#1DB954]">WORLD</b></div>
+<span class="md:hidden bg-red-500 px-1.5 py-0.5 rounded-full text-[9px] font-bold animate-pulse shrink-0">🔴 LIVE</span>
 <button onclick="history.back()" class="hidden md:flex w-8 h-8 bg-black rounded-full items-center justify-center">‹</button>
 <button onclick="history.forward()" class="hidden md:flex w-8 h-8 bg-black rounded-full items-center justify-center">›</button>
-<div class="md:hidden flex items-center gap-1.5"><div class="w-8 h-8 bg-white rounded-full flex items-center justify-center font-black text-black text-sm">G</div><b class="text-sm">GOSPEL <span class="text-[#1DB954]">WORLD</span></b><span class="bg-red-500 px-2 py-0.5 rounded-full text-[9px] font-bold animate-pulse">🔴 LIVE</span></div>
 </div>
-<div class="flex gap-2 items-center">
-<button onclick="installApp()" class="bg-[#1DB954] text-white px-3 py-2 rounded-full font-bold text-xs whitespace-nowrap">📥 TELECHARGER L'APP</button>
-<button onclick="openModal('single')" class="bg-[#FFD700] text-black px-3 md:px-4 py-2 rounded-full font-black text-xs md:text-sm whitespace-nowrap">➕ PUBLIER</button>
-<div class="hidden md:flex w-9 h-9 bg-gradient-to-br from-yellow-400 to-pink-500 rounded-full items-center justify-center font-black">G</div>
-</div></header>
+<div class="header-scroll flex-1 flex items-center gap-2 overflow-x-auto">
+<button onclick="installApp()" class="bg-[#1DB954] text-white px-3 py-2 rounded-full font-bold text-[11px] md:text-xs whitespace-nowrap shrink-0">📥 TELECHARGER L'APP</button>
+<button onclick="openDonateGW()" class="bg-white text-black px-3 py-2 rounded-full font-bold text-[11px] md:text-xs whitespace-nowrap shrink-0">💛 629-757-411</button>
+<button onclick="startRadio()" class="bg-white/10 px-3 py-2 rounded-full font-bold text-[11px] md:text-xs whitespace-nowrap shrink-0">📻 RADIO</button>
+<div class="hidden md:flex w-9 h-9 bg-gradient-to-br from-yellow-400 to-pink-500 rounded-full items-center justify-center font-black shrink-0">G</div>
+</div>
+</header>
 
-<section class="px-3 md:px-6 pt-3"><div class="top-banner bg-gradient-to-r from-yellow-400 via-pink-500 to-cyan-400 rounded-2xl p-4 flex items-center justify-between gap-3"><div class="min-w-0"><h3 class="font-black text-black text-sm md:text-xl leading-tight">🎤 TU ES ARTISTE? BALANCE TON SON!</h3><p class="text-black text-[11px] md:text-sm font-bold">Single - EP - Album - Reste pour toujours! 🔒 Gratuit</p></div><button onclick="openModal('single')" class="bg-black text-white px-4 md:px-6 py-2.5 rounded-full font-black text-xs md:text-sm whitespace-nowrap pulse-ring shrink-0">➕ PUBLIER</button></div></section>
+<section class="px-3 md:px-6 pt-3"><div class="top-banner bg-gradient-to-r from-yellow-400 via-pink-500 to-cyan-400 rounded-2xl p-4 flex items-center justify-between gap-3"><div class="min-w-0"><h3 class="font-black text-black text-sm md:text-xl leading-tight">🎤 TU ES ARTISTE? BALANCE TON SON!</h3><p class="text-black text-[11px] md:text-sm font-bold">Single - EP - Album - Reste pour toujours! 🔒 Gratuit</p></div><button onclick="openDonateGW()" class="bg-black text-white px-4 py-2.5 rounded-full font-black text-xs whitespace-nowrap shrink-0">💛 SOUTENIR</button></div></section>
 <section class="px-3 md:px-6 pt-4"><div id="stories" class="flex gap-3 md:gap-4 overflow-x-auto pb-2"></div></section>
 
 <section class="hero-grad px-3 md:px-6 pt-4 pb-5">
@@ -265,7 +255,7 @@ input:focus{border-color:#FFD700!important;outline:none}
 <div class="flex-1 min-w-0"><span class="bg-[#FFD700] text-black text-[9px] font-black px-2 py-0.5 rounded-full">⚡ FLASH EVANGILE WORLD</span><h3 class="font-black text-[13px] md:text-base truncate mt-1">FLASH EVANGILE WORLD</h3><p class="text-[11px] md:text-sm text-[#B3B3B3] truncate">La voix du Gospel dans le monde entier</p></div>
 <button onclick="openDonateGW()" class="bg-[#FFD700] text-black px-3 py-2 rounded-full font-black text-[11px] md:text-sm shrink-0 fire">💛 SOUTENIR<br>629-757-411</button>
 </div>
-<div class="action-row mt-3 flex gap-2 flex-wrap"><button onclick="startRadio()" class="gold-btn px-4 py-2.5 rounded-full font-black text-xs fire">📻 RADIO ROYAUME</button><button onclick="playFirst()" class="bg-white text-black px-4 py-2.5 rounded-full font-black text-xs">🔀 ALEATOIRE</button><button onclick="openDonateGW()" class="bg-[#FFD700] text-black px-4 py-2.5 rounded-full font-black text-xs">💛 SOUTENIR GW - 629-757-411</button><button onclick="toggleKingdom()" class="bg-purple-600 px-4 py-2.5 rounded-full font-black text-xs">👑 MODE ROYAUME</button><button onclick="openModal('single')" class="bg-[#1DB954] text-white px-4 py-2.5 rounded-full font-black text-xs">➕ PUBLIER MON SON</button></div>
+<div class="action-row mt-3 flex gap-2 flex-wrap"><button onclick="startRadio()" class="gold-btn px-4 py-2.5 rounded-full font-black text-xs fire">📻 RADIO ROYAUME</button><button onclick="playFirst()" class="bg-white text-black px-4 py-2.5 rounded-full font-black text-xs">🔀 ALEATOIRE</button><button onclick="openDonateGW()" class="bg-[#FFD700] text-black px-4 py-2.5 rounded-full font-black text-xs">💛 SOUTENIR GW - 629-757-411</button><button onclick="toggleKingdom()" class="bg-purple-600 px-4 py-2.5 rounded-full font-black text-xs">👑 MODE ROYAUME</button></div>
 <div class="mt-3 bg-black/40 rounded-full py-2 overflow-hidden"><div class="marquee text-[#FFD700] text-xs md:text-sm font-bold">⚡ FLASH EVANGILE WORLD - 👑 ROYAUME DE DIEU - KINGDOM OF GOD - 🌍 GOSPEL WORLD GLOBAL - 💛 SOUTENIR GOSPEL WORLD - ORANGE MONEY 629-757-411 - TELECHARGEMENT HD GRATUIT - 🔒 TES SONS RESTENT POUR TOUJOURS - 100% GRATUIT - 👑 ROYAUME DE DIEU ⚡</div></div>
 <div id="statsBar" class="mt-3 grid grid-cols-4 gap-2 max-w-3xl"></div>
 <div class="flags-row mt-3 flex gap-2 flex-wrap"><span class="bg-white/10 px-3 py-1 rounded-full text-xs">🇬🇳 Guinée</span><span class="bg-white/10 px-3 py-1 rounded-full text-xs">🇫🇷 France</span><span class="bg-white/10 px-3 py-1 rounded-full text-xs">🇺🇸 USA</span><span class="bg-white/10 px-3 py-1 rounded-full text-xs">🇨🇮 Côte d'Ivoire</span><span class="bg-white/10 px-3 py-1 rounded-full text-xs">🇨🇦 Canada</span><span class="bg-[#FFD700] text-black px-3 py-1 rounded-full text-xs font-black">🌍 + 120 PAYS</span></div>
@@ -304,7 +294,6 @@ input:focus{border-color:#FFD700!important;outline:none}
 <footer class="px-4 md:px-6 mt-8 pb-4 text-xs text-[#B3B3B3]"><div class="grid grid-cols-2 md:grid-cols-4 gap-4"><div><b class="text-white">GOSPEL WORLD</b><p class="mt-2">A propos</p><p>Presse</p></div><div><b class="text-white">Communautés</b><p class="mt-2">Artistes</p><p>Publicité</p></div><div><b class="text-white">Liens utiles</b><p class="mt-2">Aide</p><p>App mobile</p></div><div><b class="text-white">👑 ROYAUME DE DIEU</b><p class="mt-2">💛 629-757-411</p><p>© 2026 GOSPEL WORLD</p></div></div></footer>
 </main></div>
 
-<!-- PLAYER -->
 <div class="player-bar fixed bottom-[68px] md:bottom-0 left-0 md:left-auto right-0 md:right-0 w-full md:w-full bg-black border-t border-white/10 p-3 z-50 md:rounded-none">
 <div class="flex items-center gap-3 max-w-[1500px] mx-auto">
 <div class="flex items-center gap-3 w-[35%] min-w-[130px]"><img id="cover" onclick="openFullPlayer()" src="https://picsum.photos/seed/gospel/100" class="w-11 h-11 md:w-14 md:h-14 rounded-lg cursor-pointer shrink-0"><div class="min-w-0"><h4 id="ptitle" class="font-bold truncate text-[13px] md:text-sm">Choisis un chant</h4><p id="partist" class="text-[11px] md:text-xs text-[#B3B3B3] truncate">GOSPEL WORLD</p><p id="playlistInfo" class="text-[10px] text-[#1DB954]"></p></div></div>
